@@ -1,0 +1,9 @@
+game logic
+    ship updates
+    asteroids updates
+    collision detections
+game states
+    states machine
+    update/render for each state
+        to separate logic
+
