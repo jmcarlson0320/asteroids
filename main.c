@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SCALE_FACTOR 4
+#define SCALE_FACTOR 3
 #define WIDTH (1920 / SCALE_FACTOR)
 #define HEIGHT (1080 / SCALE_FACTOR)
 
@@ -28,6 +28,23 @@ const int COLORS[NUM_COLORS] = {
     [INDIGO] = 0x4b0082,
     [VIOLET] = 0x7f00ff
 };
+
+
+vec2 wrap_coor(vec2 pos, int w, int h)
+{
+    vec2 new = pos;
+    if (pos.e[X_COOR] < 0) {
+        new.e[X_COOR] = WIDTH + pos.e[X_COOR];
+    } else if (pos.e[X_COOR] >= w) {
+        new.e[X_COOR] = pos.e[X_COOR] - w;
+    } else if (pos.e[Y_COOR] < 0) {
+        new.e[Y_COOR] = h + pos.e[Y_COOR];
+    } else if (pos.e[Y_COOR] >= h) {
+        new.e[Y_COOR] = pos.e[Y_COOR] - h;
+    }
+
+    return new;
+}
 
 /******************************************************************************
  * asteroid
@@ -64,7 +81,7 @@ typedef struct {
 void asteroid_init(asteroid *a)
 {
     a->vel = new_vec2((float) rand() / (float) RAND_MAX * 100.0f - 50.0f, (float) rand() / (float) RAND_MAX * 100.0f - 50.0f);
-    a->size = 10;
+    a->size = 7;
     a->angle = (float) rand() / (float) RAND_MAX * 2.0f * M_PI;
     a->ang_vel = (float) rand() / (float) RAND_MAX * 0.02f - 0.01f;
     a->pos = new_vec2((float) rand() / (float) RAND_MAX * WIDTH, (float) rand() / (float) RAND_MAX * HEIGHT);
@@ -79,15 +96,7 @@ void asteroid_update(asteroid *a, float dt)
     vec2_mult(&ds, &a->vel, dt);
     vec2_add(&a->pos, &a->pos, &ds);
 
-    if (a->pos.e[X_COOR] < -a->size) {
-        a->pos.e[X_COOR] = WIDTH + a->pos.e[X_COOR];
-    } else if (a->pos.e[X_COOR] >= WIDTH + a->size) {
-        a->pos.e[X_COOR] = a->pos.e[X_COOR] - WIDTH - a->size;
-    } else if (a->pos.e[Y_COOR] < -a->size) {
-        a->pos.e[Y_COOR] = HEIGHT + a->pos.e[Y_COOR];
-    } else if (a->pos.e[Y_COOR] >= HEIGHT + a->size) {
-        a->pos.e[Y_COOR] = a->pos.e[Y_COOR] - HEIGHT - a->size;
-    }
+    a->pos = wrap_coor(a->pos, WIDTH, HEIGHT);
 }
 
 void asteroid_render(asteroid *a)
@@ -179,13 +188,14 @@ void ship_render(ship *s)
     draw_wireframe(ship_model, 3, &t);
 }
 
-#define BULLET_LIFETIME 3
+#define BULLET_LIFETIME 1
 typedef struct {
     vec2 pos;
     vec2 vel;
     int active_flag;
     float timer;
 } bullet;
+
 
 /******************************************************************************
  * game state
@@ -258,7 +268,7 @@ const int KEY_MAP[NUM_INPUTS] = {
     [QUIT] = KEY_Q
 };
 
-void process_input(asteroids *game, App *app)
+void get_user_input(asteroids *game, App *app)
 {
     game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
 
@@ -271,9 +281,26 @@ void process_input(asteroids *game, App *app)
         app->running = 0;
     }
 
-    ship *s = &game->player;
+    if (app->keyboard.pressed[KEY_N]) {
+        asteroid *a = list_pop(game->inactive_asteroids, 0);
+        if (a) {
+            asteroid_init(a);
+            list_append(game->active_asteroids, a);
+        }
+    }
 
+    if (app->keyboard.pressed[KEY_M]) {
+        asteroid *a = list_pop(game->active_asteroids, 0);
+        if (a) {
+            list_append(game->inactive_asteroids, a);
+        }
+    }
+}
+
+void handle_user_input(asteroids *game)
+{
     // ship rotation
+    ship *s = &game->player;
     if (game->input[LEFT] && game->input[RIGHT]) {
         s->ctl_rotate = ROTATE_STOP;
     } else if (game->input[LEFT]) {
@@ -291,7 +318,8 @@ void process_input(asteroids *game, App *app)
         s->ctl_thrust = 0;
     }
 
-    if (app->keyboard.pressed[KEY_MAP[FIRE]] && game->num_bullets < MAX_BULLETS) {
+    // bullets
+    if (game->input[FIRE] && game->num_bullets < MAX_BULLETS) {
         for (int i = 0; i < MAX_BULLETS; i++) {
             bullet *b = &game->bullet_list[i];
             if (!b->active_flag) {
@@ -299,25 +327,11 @@ void process_input(asteroids *game, App *app)
                 b->timer = 0;
                 b->pos = s->pos;
                 b->vel = vec2_unit_vec(s->angle);
-                vec2_mult(&b->vel, &b->vel, 75);
+                vec2_mult(&b->vel, &b->vel, 250);
+                vec2_add(&b->vel, &b->vel, &s->vel);
                 game->num_bullets++;
                 break;
             }
-        }
-    }
-
-    if (app->keyboard.pressed[KEY_N]) {
-        asteroid *a = list_pop(game->inactive_asteroids, 0);
-        if (a) {
-            asteroid_init(a);
-            list_append(game->active_asteroids, a);
-        }
-    }
-
-    if (app->keyboard.pressed[KEY_M]) {
-        asteroid *a = list_pop(game->active_asteroids, 0);
-        if (a) {
-            list_append(game->inactive_asteroids, a);
         }
     }
 }
@@ -353,6 +367,8 @@ void asteroids_init(asteroids *game)
 
 void asteroids_update(asteroids *game, float dt)
 {
+    handle_user_input(game);
+
     // color change timer
     game->timer += dt;
     if (game->timer >= 0.1f) {
@@ -386,7 +402,6 @@ void asteroids_update(asteroids *game, float dt)
 
     // state transition
     game->state = next_state(game->state, next_event(game));
-
 }
 
 void asteroids_render(asteroids *game)
@@ -411,6 +426,7 @@ void asteroids_render(asteroids *game)
     }
 }
 
+
 /******************************************************************************
  * main loop
  * ***************************************************************************/
@@ -422,7 +438,7 @@ int main(int argc, char *argv[])
     app_start(&app);
     while (app.running) {
         app_begin_frame(&app);
-        process_input(&game, &app);
+        get_user_input(&game, &app);
         asteroids_update(&game, app.time.dt_sec);
         asteroids_render(&game);
         app_end_frame(&app);
