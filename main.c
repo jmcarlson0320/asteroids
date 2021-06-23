@@ -351,22 +351,22 @@ void asteroids_init(asteroids *game)
     game->num_bullets = 0;
 }
 
-void asteroids_update(asteroids *game, App *app)
+void asteroids_update(asteroids *game, float dt)
 {
     // color change timer
-    game->timer += app->time.dt_sec;
+    game->timer += dt;
     if (game->timer >= 0.1f) {
         game->cur_color++;
         game->cur_color %= NUM_COLORS;
         game->timer = 0;
     }
 
-    ship_update(&game->player, app->time.dt_sec);
+    ship_update(&game->player, dt);
 
     List_Iterator it = list_iterator(game->active_asteroids);
     asteroid *a;
     while ((a = list_next(&it))) {
-        asteroid_update(a, app->time.dt_sec);
+        asteroid_update(a, dt);
     }
 
     for (int i = 0; i < MAX_BULLETS; i++) {
@@ -377,9 +377,9 @@ void asteroids_update(asteroids *game, App *app)
                 game->num_bullets--;
             } else {
                 vec2 ds;
-                vec2_mult(&ds, &b->vel, app->time.dt_sec);
+                vec2_mult(&ds, &b->vel, dt);
                 vec2_add(&b->pos, &b->pos, &ds);
-                b->timer += app->time.dt_sec;
+                b->timer += dt;
             }
         }
     }
@@ -423,7 +423,7 @@ int main(int argc, char *argv[])
     while (app.running) {
         app_begin_frame(&app);
         process_input(&game, &app);
-        asteroids_update(&game, &app);
+        asteroids_update(&game, app.time.dt_sec);
         asteroids_render(&game);
         app_end_frame(&app);
     }
