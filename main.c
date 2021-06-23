@@ -125,6 +125,12 @@ vec2 ship_model[3] = {
     {{-0.5f, -0.25f}}
 };
 
+vec2 flame_model[3] = {
+    {{-0.8f,  0.0f}},
+    {{-0.5f,  0.1f}},
+    {{-0.5f, -0.1f}}
+};
+
 typedef struct {
     vec2 *model;
     float scale;
@@ -132,6 +138,8 @@ typedef struct {
     vec2 pos;
     vec2 vel;
     float drag;
+    float flame_timer;
+    int flame_toggle;
 
     enum rotate_state ctl_rotate;
     int ctl_thrust;
@@ -146,6 +154,9 @@ void ship_init(ship *s, vec2 *model)
 
     s->vel = new_vec2(0, 0);
     s->drag = 0.99f;
+
+    s->flame_timer = 0;
+    s->flame_toggle = 1;
 
     s->ctl_rotate = ROTATE_STOP;
     s->ctl_thrust = 0;
@@ -169,6 +180,11 @@ void ship_update(ship *s, float dt)
         vec2_normalize(&dv, &dv);
         vec2_mult(&dv, &dv, 3);
         vec2_add(&s->vel, &s->vel, &dv);
+        s->flame_timer += dt;
+        if (s->flame_timer > 0.066f) {
+            s->flame_timer = 0;
+            s->flame_toggle = !s->flame_toggle;
+        }
     }
 
     vec2_mult(&s->vel, &s->vel, s->drag);
@@ -186,6 +202,10 @@ void ship_render(ship *s)
     transform_rotate(&t, s->angle);
     transform_translate(&t, s->pos.e[X_COOR], s->pos.e[Y_COOR]);
     draw_wireframe(ship_model, 3, &t);
+
+    if (s->ctl_thrust && s->flame_toggle) {
+        draw_wireframe(flame_model, 3, &t);
+    }
 }
 
 #define BULLET_LIFETIME 1
@@ -421,7 +441,7 @@ void asteroids_render(asteroids *game)
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullet b = game->bullet_list[i];
         if (b.active_flag) {
-            draw_point(b.pos.e[X_COOR], b.pos.e[Y_COOR], 0xffffff);
+            draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
         }
     }
 }

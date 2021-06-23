@@ -2,7 +2,6 @@ assets
     asteroids
         med
         small
-    flame on ship
     enemy ship
     particles
         explosion
