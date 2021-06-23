@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define SCALE_FACTOR 3
+#define SCALE_FACTOR 4
 #define WIDTH (1920 / SCALE_FACTOR)
 #define HEIGHT (1080 / SCALE_FACTOR)
 
@@ -179,10 +179,12 @@ void ship_render(ship *s)
     draw_wireframe(ship_model, 3, &t);
 }
 
+#define BULLET_LIFETIME 3
 typedef struct {
     vec2 pos;
     vec2 vel;
     int active_flag;
+    float timer;
 } bullet;
 
 /******************************************************************************
@@ -294,6 +296,7 @@ void process_input(asteroids *game, App *app)
             bullet *b = &game->bullet_list[i];
             if (!b->active_flag) {
                 b->active_flag = ACTIVE;
+                b->timer = 0;
                 b->pos = s->pos;
                 b->vel = vec2_unit_vec(s->angle);
                 vec2_mult(&b->vel, &b->vel, 75);
@@ -339,17 +342,17 @@ void asteroids_init(asteroids *game)
         list_append(game->inactive_asteroids, a);
     }
     for (int i = 0; i < MAX_BULLETS; i++) {
-        game->bullet_list[i].pos = new_vec2(0, 0);
-        game->bullet_list[i].vel = new_vec2(0, 0);
-        game->bullet_list[i].active_flag = 0;
+        bullet *b = &game->bullet_list[i];
+        b->pos = new_vec2(0, 0);
+        b->vel = new_vec2(0, 0);
+        b->active_flag = INACTIVE;
+        b->timer = 0;
     }
     game->num_bullets = 0;
 }
 
 void asteroids_update(asteroids *game, App *app)
 {
-    process_input(game, app);
-
     // color change timer
     game->timer += app->time.dt_sec;
     if (game->timer >= 0.1f) {
@@ -369,9 +372,15 @@ void asteroids_update(asteroids *game, App *app)
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullet *b = &game->bullet_list[i];
         if (b->active_flag) {
-            vec2 ds;
-            vec2_mult(&ds, &b->vel, app->time.dt_sec);
-            vec2_add(&b->pos, &b->pos, &ds);
+            if (b->timer > BULLET_LIFETIME) {
+                b->active_flag = INACTIVE;
+                game->num_bullets--;
+            } else {
+                vec2 ds;
+                vec2_mult(&ds, &b->vel, app->time.dt_sec);
+                vec2_add(&b->pos, &b->pos, &ds);
+                b->timer += app->time.dt_sec;
+            }
         }
     }
 
@@ -413,6 +422,7 @@ int main(int argc, char *argv[])
     app_start(&app);
     while (app.running) {
         app_begin_frame(&app);
+        process_input(&game, &app);
         asteroids_update(&game, &app);
         asteroids_render(&game);
         app_end_frame(&app);
