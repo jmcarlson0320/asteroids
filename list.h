@@ -5,6 +5,12 @@ typedef struct List List;
 typedef struct Node Node;
 typedef struct List_Iterator List_Iterator;
 
+struct List {
+    Node *head;
+    Node *tail;
+    int length;
+};
+
 struct Node {
     void *val;
     Node *next;

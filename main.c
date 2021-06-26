@@ -1,10 +1,11 @@
 #include <tiny-fw.h>
 #include <math.h>
-#include "list.h"
 #include <stdlib.h>
 #include <time.h>
+#include "list.h"
+#include "particle.h"
 
-#define SCALE_FACTOR 3
+#define SCALE_FACTOR 4
 #define WIDTH (1920 / SCALE_FACTOR)
 #define HEIGHT (1080 / SCALE_FACTOR)
 
@@ -214,6 +215,7 @@ typedef struct {
     vec2 vel;
     int active_flag;
     float timer;
+    Emitter particles;
 } bullet;
 
 
@@ -347,7 +349,9 @@ void handle_user_input(asteroids *game)
                 b->timer = 0;
                 b->pos = s->pos;
                 b->vel = vec2_unit_vec(s->angle);
-                vec2_mult(&b->vel, &b->vel, 250);
+                emitter_reset_particles(&b->particles);
+                b->particles.pos = b->pos;
+                vec2_mult(&b->vel, &b->vel, 500);
                 vec2_add(&b->vel, &b->vel, &s->vel);
                 game->num_bullets++;
                 break;
@@ -381,6 +385,8 @@ void asteroids_init(asteroids *game)
         b->vel = new_vec2(0, 0);
         b->active_flag = INACTIVE;
         b->timer = 0;
+        b->particles = emitter_create(200, b->pos.e[X_COOR], b->pos.e[Y_COOR]);
+        emitter_reset_particles(&b->particles);
     }
     game->num_bullets = 0;
 }
@@ -416,6 +422,8 @@ void asteroids_update(asteroids *game, float dt)
                 vec2_mult(&ds, &b->vel, dt);
                 vec2_add(&b->pos, &b->pos, &ds);
                 b->timer += dt;
+                b->particles.pos = b->pos;
+                emitter_update(&b->particles, dt);
             }
         }
     }
@@ -428,8 +436,12 @@ void asteroids_render(asteroids *game)
 {
     draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
     ship_render(&game->player);
-    draw_text("asteroids!!!\n"
-              "press 'Q' to quit",
+    draw_text("asteroids test!!!\n"
+              "press 'Q' to quit\n"
+              "press 'N' to add an asteroid\n"
+              "press 'M' to remove an asteroid\n"
+              "press 'SPACE' to fire\n"
+              "press 'WASD' to move",
               0, 0, COLORS[game->cur_color]);
 
     List_Iterator it = list_iterator(game->active_asteroids);
@@ -441,7 +453,8 @@ void asteroids_render(asteroids *game)
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullet b = game->bullet_list[i];
         if (b.active_flag) {
-            draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
+            draw_point(b.pos.e[X_COOR], b.pos.e[Y_COOR], 0xffffff);
+            emitter_render(&b.particles);
         }
     }
 }

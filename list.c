@@ -1,8 +1,6 @@
 #include "list.h"
 #include <stdlib.h>
 
-
-
 Node *node_new(void *val)
 {
     Node *new = malloc(sizeof(Node));
@@ -11,12 +9,6 @@ Node *node_new(void *val)
     new->prev = NULL;
     return new;
 }
-
-struct List {
-    Node *head;
-    Node *tail;
-    int length;
-};
 
 List *list_new()
 {
@@ -46,7 +38,6 @@ void list_append(List *list, void *val)
     if (!list || !val) {
         return;
     }
-
     Node *new = node_new(val);
     if (list->tail) {
         list->tail->next = new;
@@ -63,7 +54,6 @@ void list_remove(List *list, void *val)
     if (!list || !val) {
         return;
     }
-
     int found = 0;
     Node *cur = list->head;
     while (cur && !found) {
@@ -73,7 +63,6 @@ void list_remove(List *list, void *val)
         }
         cur = cur->next;
     }
-
     if (found) {
         if (!cur->prev && !cur->next) { // single node
             list->head = NULL;
@@ -98,14 +87,12 @@ void *list_pop(List *list, int pos)
     if (!list || pos < 0 || list_len(list) <= pos) {
         return NULL;
     }
-
     int index = 0;
     Node *cur = list->head;
     while (cur && index < pos) {
         cur = cur->next;
         index++;
     }
-
     if (!cur->prev && !cur->next) { // single node
         list->head = NULL;
         list->tail = NULL;
@@ -147,6 +134,7 @@ void *list_next(List_Iterator *it)
         item = it->cur->val;
         it->cur = it->cur->next;
     }
+
     return item;
 }
 
