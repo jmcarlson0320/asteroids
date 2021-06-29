@@ -1,4 +1,11 @@
 assets
+    model builder
+        file format
+        mouse control
+        file->wireframe
+        wireframe->file
+        draw/edit modes
+        transform from screen to model coor
     asteroids
         med
         small
@@ -16,4 +23,7 @@ game states
     play
     game over
     score
-
+memory management
+    free assets
+split into files
+bloom effect in sw

@@ -193,6 +193,8 @@ void ship_update(ship *s, float dt)
     vec2 ds;
     vec2_mult(&ds, &s->vel, dt);
     vec2_add(&s->pos, &s->pos, &ds);
+
+    s->pos = wrap_coor(s->pos, WIDTH, HEIGHT);
 }
 
 void ship_render(ship *s)
@@ -436,13 +438,6 @@ void asteroids_render(asteroids *game)
 {
     draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
     ship_render(&game->player);
-    draw_text("asteroids test!!!\n"
-              "press 'Q' to quit\n"
-              "press 'N' to add an asteroid\n"
-              "press 'M' to remove an asteroid\n"
-              "press 'SPACE' to fire\n"
-              "press 'WASD' to move",
-              0, 0, COLORS[game->cur_color]);
 
     List_Iterator it = list_iterator(game->active_asteroids);
     asteroid *a;
@@ -457,6 +452,14 @@ void asteroids_render(asteroids *game)
             emitter_render(&b.particles);
         }
     }
+
+    draw_text("asteroids test!!!\n"
+              "press 'Q' to quit\n"
+              "press 'N' to add an asteroid\n"
+              "press 'M' to remove an asteroid\n"
+              "press 'SPACE' to fire\n"
+              "press 'WASD' to move",
+              0, 0, COLORS[game->cur_color]);
 }
 
 
@@ -470,11 +473,11 @@ int main(int argc, char *argv[])
     asteroids_init(&game);
     app_start(&app);
     while (app.running) {
-        app_begin_frame(&app);
+        app_update(&app);
         get_user_input(&game, &app);
         asteroids_update(&game, app.time.dt_sec);
         asteroids_render(&game);
-        app_end_frame(&app);
+        app_draw_graphics(&app);
     }
     app_quit(&app);
 

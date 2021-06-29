@@ -49,6 +49,45 @@ void list_append(List *list, void *val)
     list->length++;
 }
 
+void list_insert(List *list, int pos, void *val)
+{
+    if (!list || pos < 0 || pos > list_len(list)) {
+        return;
+    }
+
+    Node *new = node_new(val);
+
+    if (list_len(list) == 0) {
+        // empty list
+        list->head = new;
+        list->tail = new;
+    } else if (pos == 0) {
+        // insert at head
+        new->next = list->head;
+        list->head->prev = new;
+        list->head = new;
+    } else if (pos == list_len(list)) {
+        // insert at tail
+        new->prev = list->tail;
+        list->tail->next = new;
+        list->tail = new;
+    } else {
+        // insert in body
+        int index = 0;
+        Node *cur = list->head;
+        while (cur && index < pos) {
+            cur = cur->next;
+            index++;
+        }
+        new->next = cur;
+        new->prev = cur->prev;
+        cur->prev->next = new;
+        cur->prev = new;
+    }
+
+    list->length++;
+}
+
 void list_remove(List *list, void *val)
 {
     if (!list || !val) {
@@ -84,7 +123,7 @@ void list_remove(List *list, void *val)
 
 void *list_pop(List *list, int pos)
 {
-    if (!list || pos < 0 || list_len(list) <= pos) {
+    if (!list || pos < 0 || pos >= list_len(list)) {
         return NULL;
     }
     int index = 0;
@@ -111,6 +150,39 @@ void *list_pop(List *list, int pos)
     list->length--;
 
     return val;
+}
+
+void *list_get(List *list, int pos)
+{
+    if (!list || pos < 0 || pos >= list_len(list)) {
+        return NULL;
+    }
+    int index = 0;
+    Node *cur = list->head;
+    while (cur && index < pos) {
+        cur = cur->next;
+        index++;
+    }
+
+    return cur->val;
+}
+
+int list_index(List *list, void *val)
+{
+    if (!list) {
+        return -1;
+    }
+    int index = 0;
+    Node *cur = list->head;
+    while (cur) {
+        if (cur->val == val) {
+            break;
+        }
+        cur = cur->next;
+        index++;
+    }
+
+    return cur != NULL ? index : -1;
 }
 
 int list_len(List *list)
