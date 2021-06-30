@@ -1,6 +1,7 @@
 #include <tiny-fw.h>
 #include <math.h>
 #include <stdlib.h>
+#include <stdio.h>
 #include <time.h>
 #include "list.h"
 #include "particle.h"
@@ -53,22 +54,58 @@ vec2 wrap_coor(vec2 pos, int w, int h)
 enum asteroid_type {
     SMALL,
     MED,
-    LARGE
+    LARGE,
+    NUM_TYPES
 };
 
-#define NUM_POINTS_ASTEROID 10
-vec2 large_asteroid[NUM_POINTS_ASTEROID] = {
-    {{1, 2}},
-    {{3, 3}},
-    {{4, 2}},
-    {{2, 0}},
-    {{3, -1}},
-    {{1, -3}},
-    {{-2, -3}},
-    {{-3, -1}},
-    {{-3, 2}},
-    {{-1, 3}}
+int asteroid_scales[NUM_TYPES] = {
+    5,
+    10,
+    20
 };
+
+#define NUM_POINTS_ASTEROID 11
+
+enum asteroid_model {
+    ASTEROID_01,
+    ASTEROID_02,
+    ASTEROID_03,
+    NUM_MODELS
+};
+
+char *filenames[3] = {
+    "models/asteroid_01.model",
+    "models/asteroid_02.model",
+    "models/asteroid_03.model"
+};
+
+vec2 asteroid_models[NUM_MODELS][11];
+
+void load_models()
+{
+    for (int i = 0; i < NUM_MODELS; i++) {
+        // open the file
+        FILE *fp = fopen(filenames[i], "r");
+        if (!fp) {
+            printf("could not open asteroid file %s\n", filenames[i]);
+            exit(1);
+        }
+
+        int num_points = 0;
+        fscanf(fp, "%d\n", &num_points);
+        if (num_points != 11) {
+            printf("invalid model file %s\n", filenames[i]);
+            exit(1);
+        }
+
+        // for each point
+        for (int j = 0; j < 11; j++) {
+        //      read it into the models array
+            fscanf(fp, "%f %f\n", &asteroid_models[i][j].e[X_COOR], &asteroid_models[i][j].e[Y_COOR]);
+        }
+        fclose(fp);
+    }
+}
 
 typedef struct {
     vec2 vel;
@@ -77,6 +114,7 @@ typedef struct {
     float ang_vel;
     vec2 pos;
     enum asteroid_type type;
+    enum asteroid_model model;
 } asteroid;
 
 void asteroid_init(asteroid *a)
@@ -86,7 +124,8 @@ void asteroid_init(asteroid *a)
     a->angle = (float) rand() / (float) RAND_MAX * 2.0f * M_PI;
     a->ang_vel = (float) rand() / (float) RAND_MAX * 0.02f - 0.01f;
     a->pos = new_vec2((float) rand() / (float) RAND_MAX * WIDTH, (float) rand() / (float) RAND_MAX * HEIGHT);
-    a->type = LARGE;
+    a->type = rand() % NUM_TYPES;
+    a->model = rand() % NUM_MODELS;
 }
 
 void asteroid_update(asteroid *a, float dt)
@@ -104,10 +143,10 @@ void asteroid_render(asteroid *a)
 {
     // build transformation, needs to be in this order
     transform t = new_transform();
-    transform_scale(&t, a->size);
+    transform_scale(&t, asteroid_scales[a->type]);
     transform_rotate(&t, a->angle);
     transform_translate(&t, a->pos.e[X_COOR], a->pos.e[Y_COOR]);
-    draw_wireframe(large_asteroid, NUM_POINTS_ASTEROID, &t);
+    draw_wireframe(asteroid_models[a->model], NUM_POINTS_ASTEROID, &t);
 }
 
 
@@ -374,6 +413,7 @@ void asteroids_init(asteroids *game)
 
     ship_init(&game->player, ship_model);
 
+    load_models();
     game->active_asteroids = list_new();
     game->inactive_asteroids = list_new();
     for (int i = 0; i < 10; i++) {
