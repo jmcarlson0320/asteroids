@@ -13,6 +13,11 @@ enum mode {
     EDIT
 };
 
+void usage()
+{
+    printf("usage: wf <output filename>\n");
+}
+
 void clear_screen()
 {
     draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
@@ -171,6 +176,10 @@ void write_to_file(model *m, char *filename)
 model read_from_file(char *filename)
 {
     FILE *fp = fopen(filename, "r");
+    if (!fp) {
+        printf("could not open file %s\n", filename);
+        exit(1);
+    }
     model m;
     m.points = list_new();
     m.num_points = 0;
@@ -186,16 +195,17 @@ model read_from_file(char *filename)
 
 int main(int argc, char *argv[])
 {
-    App app = app_create(WIDTH, HEIGHT);
+    if (argc != 2) {
+        usage();
+        return -1;
+    }
 
-    List *points;
+    List *points = list_new();
     enum mode mode = DRAW;
     vec2 *selected_point = NULL;
     vec2 *nearest_point = NULL;
 
-    model m = read_from_file("out.model");
-    points = m.points;
-
+    App app = app_create(WIDTH, HEIGHT);
     app_start(&app);
     while (app.running) {
         app_update(&app);
@@ -207,7 +217,7 @@ int main(int argc, char *argv[])
             model m;
             m.points = points;
             m.num_points = list_len(points);
-            write_to_file(&m, "out.model");
+            write_to_file(&m, argv[1]);
         }
 
         if (app.keyboard.pressed[KEY_D]) {
