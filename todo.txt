@@ -1,14 +1,4 @@
 assets
-    model builder
-        file format
-        mouse control
-        file->wireframe
-        wireframe->file
-        draw/edit modes
-        transform from screen to model coor
-    asteroids
-        med
-        small
     enemy ship
     particles
         explosion
@@ -26,4 +16,10 @@ game states
 memory management
     free assets
 split into files
-bloom effect in sw
+software bloom effect
+    research :
+    blur?
+    write blurred image to another frame buffer?
+    down sample to very low resolution before blurring?
+    blend?
+    implement alpha blending in framework?

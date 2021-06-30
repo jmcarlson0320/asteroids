@@ -268,6 +268,7 @@ enum game_states {
     PLAY,
     RESET,
     GAME_OVER,
+    SHUTDOWN,
     NUM_STATES
 };
 
@@ -277,7 +278,9 @@ enum game_events {
     TIMER,
     LEVEL_CLEARED,
     DEFEATED,
+    INITIALS_ENTERED,
     EXIT,
+    NO_EVENT,
     NUM_EVENTS
 };
 
@@ -296,6 +299,7 @@ enum inputs {
 
 typedef struct {
     int state;
+    int event;
     int input[NUM_INPUTS];
     float timer;
     int cur_color;
@@ -306,16 +310,47 @@ typedef struct {
     int num_bullets;
     Bitmap title;
     Bitmap score;
+    void (*update)(void *, float);
+    void (*render)(void *);
 } asteroids;
 
 int next_state(int current_state, int event)
 {
-    return 0;
-}
+    if (event == EXIT) {
+        return SHUTDOWN;
+    }
 
-int next_event(asteroids *game)
-{
-    return 0;
+    int next = current_state;
+    switch (current_state) {
+        case TITLE:
+            if (event == START) {
+                next = RESET;
+            }
+            break;
+        case PLAY:
+            if (event == DESTROYED) {
+                next = RESET;
+            } else if (event == LEVEL_CLEARED) {
+                next = RESET;
+            } else if (event == DEFEATED) {
+                next = GAME_OVER;
+            }
+            break;
+        case RESET:
+            if (event == TIMER) {
+                next = PLAY;
+            }
+            break;
+        case GAME_OVER:
+            if (event == INITIALS_ENTERED) {
+                next = TITLE;
+            }
+            break;
+        default:
+            break;
+    }
+
+    return next;
 }
 
 #define ACTIVE 1
@@ -401,40 +436,14 @@ void handle_user_input(asteroids *game)
     }
 }
 
-void asteroids_init(asteroids *game)
+void title_init(void *game_state)
 {
-    srand(time(NULL));
-    game->timer = 0.0f;
-    game->cur_color = RED;
-
-    for (int i = 0; i < NUM_INPUTS; i++) {
-        game->input[i] = 0;
-    }
-
-    ship_init(&game->player, ship_model);
-
-    load_models();
-    game->active_asteroids = list_new();
-    game->inactive_asteroids = list_new();
-    for (int i = 0; i < 10; i++) {
-        asteroid *a = malloc(sizeof(asteroid));
-        asteroid_init(a);
-        list_append(game->inactive_asteroids, a);
-    }
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet *b = &game->bullet_list[i];
-        b->pos = new_vec2(0, 0);
-        b->vel = new_vec2(0, 0);
-        b->active_flag = INACTIVE;
-        b->timer = 0;
-        b->particles = emitter_create(200, b->pos.e[X_COOR], b->pos.e[Y_COOR]);
-        emitter_reset_particles(&b->particles);
-    }
-    game->num_bullets = 0;
+    asteroids *game = (asteroids *) game_state;
 }
 
-void asteroids_update(asteroids *game, float dt)
+void title_update(void *game_state, float dt)
 {
+    asteroids *game = (asteroids *) game_state;
     handle_user_input(game);
 
     // color change timer
@@ -471,11 +480,15 @@ void asteroids_update(asteroids *game, float dt)
     }
 
     // state transition
-    game->state = next_state(game->state, next_event(game));
+    if (game->event != NO_EVENT) {
+        game->state = next_state(game->state, game->event);
+        game->event = NO_EVENT;
+    }
 }
 
-void asteroids_render(asteroids *game)
+void title_render(void *game_state)
 {
+    asteroids *game = (asteroids *) game_state;
     draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
     ship_render(&game->player);
 
@@ -502,6 +515,60 @@ void asteroids_render(asteroids *game)
               0, 0, COLORS[game->cur_color]);
 }
 
+void play_init(void *game_state)
+{
+    asteroids *game = (asteroids *) game_state;
+}
+
+void play_update(void *game_state, float dt)
+{
+    asteroids *game = (asteroids *) game_state;
+}
+
+void play_render(void *game_state)
+{
+    asteroids *game = (asteroids *) game_state;
+}
+
+void asteroids_init(asteroids *game)
+{
+    game->state = TITLE;
+    game->event = NO_EVENT;
+
+    for (int i = 0; i < NUM_INPUTS; i++) {
+        game->input[i] = 0;
+    }
+
+    srand(time(NULL));
+    game->timer = 0.0f;
+
+    game->cur_color = RED;
+
+    ship_init(&game->player, ship_model);
+
+    load_models();
+    game->active_asteroids = list_new();
+    game->inactive_asteroids = list_new();
+    for (int i = 0; i < 10; i++) {
+        asteroid *a = malloc(sizeof(asteroid));
+        asteroid_init(a);
+        list_append(game->inactive_asteroids, a);
+    }
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullet *b = &game->bullet_list[i];
+        b->pos = new_vec2(0, 0);
+        b->vel = new_vec2(0, 0);
+        b->active_flag = INACTIVE;
+        b->timer = 0;
+        b->particles = emitter_create(200, b->pos.e[X_COOR], b->pos.e[Y_COOR]);
+        emitter_reset_particles(&b->particles);
+    }
+    game->num_bullets = 0;
+
+    game->update = title_update;
+    game->render = title_render;
+}
+
 
 /******************************************************************************
  * main loop
@@ -515,8 +582,11 @@ int main(int argc, char *argv[])
     while (app.running) {
         app_update(&app);
         get_user_input(&game, &app);
-        asteroids_update(&game, app.time.dt_sec);
-        asteroids_render(&game);
+
+        // the function pointers point to the update/render functions of the current gamestate
+        (*game.update)(&game, app.time.dt_sec);
+        (*game.render)(&game);
+
         app_draw_graphics(&app);
     }
     app_quit(&app);
