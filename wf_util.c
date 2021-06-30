@@ -59,6 +59,26 @@ float min(float a, float b)
     return a <= b ? a : b;
 }
 
+float max(float a, float b)
+{
+    return a >= b ? a : b;
+}
+
+vec2 average_points(List *points)
+{
+    vec2 sum = new_vec2(0, 0);
+    List_Iterator it = list_iterator(points);
+    while(list_has_next(&it)) {
+        vec2 *cur = list_next(&it);
+        vec2_add(&sum, &sum, cur);
+    }
+
+    vec2 avg;
+    vec2_div(&avg, &sum, list_len(points));
+
+    return avg;
+}
+
 vec2 *closest_point(List *points, int x, int y)
 {
     vec2 test_point = new_vec2(x, y);
@@ -77,15 +97,104 @@ vec2 *closest_point(List *points, int x, int y)
     return closest;
 }
 
+vec2 *furthest_point(List *points, int x, int y)
+{
+    vec2 test_point = new_vec2(x, y);
+    vec2 *furthest = NULL;
+    float furthest_dist = 0;
+
+    List_Iterator it = list_iterator(points);
+    vec2 *next;
+    while((next = list_next(&it))) {
+        float next_dist = dist(next, &test_point);
+        if (next_dist > furthest_dist) {
+            furthest = next;
+            furthest_dist = next_dist;
+        }
+    }
+    return furthest;
+}
+
+void center_points(List *points)
+{
+    // fing avg
+    vec2 avg = average_points(points);
+
+    // subtract average from every point
+    List_Iterator it = list_iterator(points);
+    while(list_has_next(&it)) {
+        vec2 *cur = list_next(&it);
+        vec2_sub(cur, cur, &avg);
+    }
+}
+
+void normalize_points(List *points)
+{
+    // find avg
+    vec2 avg = average_points(points);
+
+    // find point furthest from center
+    vec2 *furthest = furthest_point(points, avg.e[X_COOR], avg.e[Y_COOR]);
+
+    // get distance from furthest to center
+    vec2 diff;
+    vec2_sub(&diff, furthest, &avg);
+    float dist = vec2_len(&diff);
+
+    // get 1/length
+    float scale_factor = 1.0f / dist;
+
+    // scale all points by 1/length
+    List_Iterator it = list_iterator(points);
+    while(list_has_next(&it)) {
+        vec2 *cur = list_next(&it);
+        vec2_mult(cur, cur, scale_factor);
+    }
+}
+
+typedef struct {
+    List *points;
+    int num_points;
+} model;
+
+void write_to_file(model *m, char *filename)
+{
+    FILE *fp = fopen(filename, "w");
+    fprintf(fp, "%d\n", m->num_points);
+    for (int i = 0; i < m->num_points; i++) {
+        vec2 *p = list_get(m->points, i);
+        fprintf(fp, "%f %f\n", p->e[X_COOR], p->e[Y_COOR]);
+    }
+    fclose(fp);
+}
+
+model read_from_file(char *filename)
+{
+    FILE *fp = fopen(filename, "r");
+    model m;
+    m.points = list_new();
+    m.num_points = 0;
+    fscanf(fp, "%d\n", &m.num_points);
+    for (int i = 0; i < m.num_points; i++) {
+        vec2 *point = malloc(sizeof(vec2));
+        fscanf(fp, "%f %f\n", &point->e[X_COOR], &point->e[Y_COOR]);
+        list_append(m.points, point);
+    }
+    fclose(fp);
+    return m;
+}
+
 int main(int argc, char *argv[])
 {
     App app = app_create(WIDTH, HEIGHT);
 
-    List *points = list_new();
+    List *points;
     enum mode mode = DRAW;
     vec2 *selected_point = NULL;
     vec2 *nearest_point = NULL;
-    vec2 *next_point = NULL;
+
+    model m = read_from_file("out.model");
+    points = m.points;
 
     app_start(&app);
     while (app.running) {
@@ -93,6 +202,12 @@ int main(int argc, char *argv[])
 
         if (app.keyboard.down[KEY_Q]) {
             app.running = 0;
+            center_points(points);
+            normalize_points(points);
+            model m;
+            m.points = points;
+            m.num_points = list_len(points);
+            write_to_file(&m, "out.model");
         }
 
         if (app.keyboard.pressed[KEY_D]) {
@@ -105,18 +220,15 @@ int main(int argc, char *argv[])
 
         if (mode == DRAW) {
             nearest_point = closest_point(points, app.mouse.x, app.mouse.y);
-            if (nearest_point) {
-                int next_point_pos = list_index(points, nearest_point);
-                next_point_pos++;
-                next_point_pos %= list_len(points);
-                next_point = list_get(points, next_point_pos);
-            }
             if (app.mouse.pressed[MOUSE_BUTTON_LEFT]) {
                 vec2 *point = malloc(sizeof(vec2));
                 *point = new_vec2(app.mouse.x, app.mouse.y);
-                if (next_point) {
-                    list_insert(points, list_index(points, next_point), point);
+                int index = list_index(points, nearest_point);
+                if (index != -1) {
+                    // there are points in the list, insert at index
+                    list_insert(points, index, point);
                 } else {
+                    // list is empty, just append new point
                     list_append(points, point);
                 }
             }
@@ -132,33 +244,32 @@ int main(int argc, char *argv[])
                 selected_point = NULL;
             }
 
-            if (app.mouse.button[MOUSE_BUTTON_LEFT]) {
+            if (app.mouse.button[MOUSE_BUTTON_LEFT] && selected_point) {
                 selected_point->e[X_COOR] = app.mouse.x;
                 selected_point->e[Y_COOR] = app.mouse.y;
             }
 
             if (app.mouse.pressed[MOUSE_BUTTON_RIGHT]) {
-                list_remove(points, nearest_point);
-                nearest_point = closest_point(points, app.mouse.x, app.mouse.y);
+                if (nearest_point) {
+                    list_remove(points, nearest_point);
+                    nearest_point = closest_point(points, app.mouse.x, app.mouse.y);
+                }
             }
         }
 
         clear_screen();
         draw_points(points);
 
-        if (mode == EDIT && nearest_point) {
-            draw_fill_rect(nearest_point->e[X_COOR] - 1, nearest_point->e[Y_COOR] - 1, 
-                           nearest_point->e[X_COOR] + 1, nearest_point->e[Y_COOR] + 1, 0x00ff00);
-        }
-
-        if (mode == DRAW && nearest_point) {
-            draw_fill_rect(nearest_point->e[X_COOR] - 1, nearest_point->e[Y_COOR] - 1, 
-                           nearest_point->e[X_COOR] + 1, nearest_point->e[Y_COOR] + 1, 0xffffff);
-        }
-
-        if (mode == DRAW && next_point) {
-            draw_fill_rect(next_point->e[X_COOR] - 1, next_point->e[Y_COOR] - 1, 
-                           next_point->e[X_COOR] + 1, next_point->e[Y_COOR] + 1, 0xffffff);
+        // highlight the closest point
+        if (nearest_point) {
+            if (mode == EDIT) {
+                draw_fill_rect(nearest_point->e[X_COOR] - 1, nearest_point->e[Y_COOR] - 1, 
+                               nearest_point->e[X_COOR] + 1, nearest_point->e[Y_COOR] + 1, 0x00ff00);
+            }
+            if (mode == DRAW) {
+                draw_fill_rect(nearest_point->e[X_COOR] - 1, nearest_point->e[Y_COOR] - 1, 
+                               nearest_point->e[X_COOR] + 1, nearest_point->e[Y_COOR] + 1, 0xffffff);
+            }
         }
 
         draw_cursor(app.mouse.x, app.mouse.y);
