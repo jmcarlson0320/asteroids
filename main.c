@@ -314,6 +314,10 @@ typedef struct {
     void (*render)(void *);
 } asteroids;
 
+int check_for_event(asteroids *game)
+{
+    return NO_EVENT;
+}
 int next_state(int current_state, int event)
 {
     if (event == EXIT) {
@@ -479,11 +483,6 @@ void title_update(void *game_state, float dt)
         }
     }
 
-    // state transition
-    if (game->event != NO_EVENT) {
-        game->state = next_state(game->state, game->event);
-        game->event = NO_EVENT;
-    }
 }
 
 void title_render(void *game_state)
@@ -582,6 +581,13 @@ int main(int argc, char *argv[])
     while (app.running) {
         app_update(&app);
         get_user_input(&game, &app);
+
+        // state transition
+        game.event = check_for_event(&game);
+        if (game.event != NO_EVENT) {
+            game.state = next_state(game.state, game.event);
+            game.event = NO_EVENT;
+        }
 
         // the function pointers point to the update/render functions of the current gamestate
         (*game.update)(&game, app.time.dt_sec);
