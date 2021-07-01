@@ -5,10 +5,7 @@
 #include <time.h>
 #include "list.h"
 #include "particle.h"
-
-#define SCALE_FACTOR 4
-#define WIDTH (1920 / SCALE_FACTOR)
-#define HEIGHT (1080 / SCALE_FACTOR)
+#include "defs.h"
 
 enum colors {
     RED,
@@ -31,22 +28,18 @@ const int COLORS[NUM_COLORS] = {
     [VIOLET] = 0x7f00ff
 };
 
+vec2 ship_model[3] = {
+    {{ 0.5f,  0.0f}},
+    {{-0.5f,  0.25f}},
+    {{-0.5f, -0.25f}}
+};
 
-vec2 wrap_coor(vec2 pos, int w, int h)
-{
-    vec2 new = pos;
-    if (pos.e[X_COOR] < 0) {
-        new.e[X_COOR] = WIDTH + pos.e[X_COOR];
-    } else if (pos.e[X_COOR] >= w) {
-        new.e[X_COOR] = pos.e[X_COOR] - w;
-    } else if (pos.e[Y_COOR] < 0) {
-        new.e[Y_COOR] = h + pos.e[Y_COOR];
-    } else if (pos.e[Y_COOR] >= h) {
-        new.e[Y_COOR] = pos.e[Y_COOR] - h;
-    }
+vec2 flame_model[3] = {
+    {{-0.8f,  0.0f}},
+    {{-0.5f,  0.1f}},
+    {{-0.5f, -0.1f}}
+};
 
-    return new;
-}
 
 /******************************************************************************
  * asteroid
@@ -147,107 +140,6 @@ void asteroid_render(asteroid *a)
     transform_rotate(&t, a->angle);
     transform_translate(&t, a->pos.e[X_COOR], a->pos.e[Y_COOR]);
     draw_wireframe(asteroid_models[a->model], NUM_POINTS_ASTEROID, &t);
-}
-
-
-/******************************************************************************
- * ship
- * ***************************************************************************/
-enum rotate_state {
-    ROTATE_LEFT,
-    ROTATE_RIGHT,
-    ROTATE_STOP
-};
-
-vec2 ship_model[3] = {
-    {{ 0.5f,  0.0f}},
-    {{-0.5f,  0.25f}},
-    {{-0.5f, -0.25f}}
-};
-
-vec2 flame_model[3] = {
-    {{-0.8f,  0.0f}},
-    {{-0.5f,  0.1f}},
-    {{-0.5f, -0.1f}}
-};
-
-typedef struct {
-    vec2 *model;
-    float scale;
-    float angle;
-    vec2 pos;
-    vec2 vel;
-    float drag;
-    float flame_timer;
-    int flame_toggle;
-
-    enum rotate_state ctl_rotate;
-    int ctl_thrust;
-} ship;
-
-void ship_init(ship *s, vec2 *model)
-{
-    s->model = model;
-    s->angle = 3.0f * M_PI / 2.0f;
-    s->scale = 15;
-    s->pos = new_vec2(WIDTH / 2, HEIGHT / 2);
-
-    s->vel = new_vec2(0, 0);
-    s->drag = 0.99f;
-
-    s->flame_timer = 0;
-    s->flame_toggle = 1;
-
-    s->ctl_rotate = ROTATE_STOP;
-    s->ctl_thrust = 0;
-}
-
-void ship_update(ship *s, float dt)
-{
-    switch (s->ctl_rotate) {
-        case ROTATE_LEFT:
-            s->angle -= 0.05;
-            break;
-        case ROTATE_RIGHT:
-            s->angle += 0.05;
-            break;
-        default:
-            break;
-    }
-
-    if (s->ctl_thrust) {
-        vec2 dv = new_vec2(cos(s->angle), sin(s->angle));
-        vec2_normalize(&dv, &dv);
-        vec2_mult(&dv, &dv, 3);
-        vec2_add(&s->vel, &s->vel, &dv);
-        s->flame_timer += dt;
-        if (s->flame_timer > 0.066f) {
-            s->flame_timer = 0;
-            s->flame_toggle = !s->flame_toggle;
-        }
-    }
-
-    vec2_mult(&s->vel, &s->vel, s->drag);
-
-    vec2 ds;
-    vec2_mult(&ds, &s->vel, dt);
-    vec2_add(&s->pos, &s->pos, &ds);
-
-    s->pos = wrap_coor(s->pos, WIDTH, HEIGHT);
-}
-
-void ship_render(ship *s)
-{
-    // build transformation, needs to be in this order
-    transform t = new_transform();
-    transform_scale(&t, s->scale);
-    transform_rotate(&t, s->angle);
-    transform_translate(&t, s->pos.e[X_COOR], s->pos.e[Y_COOR]);
-    draw_wireframe(ship_model, 3, &t);
-
-    if (s->ctl_thrust && s->flame_toggle) {
-        draw_wireframe(flame_model, 3, &t);
-    }
 }
 
 #define BULLET_LIFETIME 1
@@ -543,7 +435,7 @@ void asteroids_init(asteroids *game)
 
     game->cur_color = RED;
 
-    ship_init(&game->player, ship_model);
+    ship_init(&game->player, ship_model, flame_model, WIDTH / 2, HEIGHT / 2);
 
     load_models();
     game->active_asteroids = list_new();
