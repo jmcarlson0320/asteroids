@@ -1,3 +1,7 @@
+refactor
+    consistent first-class ADT
+    each component in its own file
+    globals -> static variables in component file
 assets
     enemy ship
     particles

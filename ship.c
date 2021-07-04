@@ -1,7 +1,19 @@
 #include "defs.h"
 #include <math.h>
 
-void ship_init(ship *s, vec2 *ship_model, vec2 *flame_model, float x, float y)
+static vec2 ship_model[3] = {
+    {{ 0.5f,  0.0f}},
+    {{-0.5f,  0.25f}},
+    {{-0.5f, -0.25f}}
+};
+
+static vec2 flame_model[3] = {
+    {{-0.8f,  0.0f}},
+    {{-0.5f,  0.1f}},
+    {{-0.5f, -0.1f}}
+};
+
+void ship_init(ship *s, float x, float y)
 {
     s->model = ship_model;
     s->flame = flame_model;

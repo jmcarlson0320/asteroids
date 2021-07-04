@@ -200,6 +200,7 @@ int main(int argc, char *argv[])
         return -1;
     }
 
+    char *output_filename = argv[1];
     List *points = list_new();
     enum mode mode = DRAW;
     vec2 *selected_point = NULL;
@@ -217,7 +218,7 @@ int main(int argc, char *argv[])
             model m;
             m.points = points;
             m.num_points = list_len(points);
-            write_to_file(&m, argv[1]);
+            write_to_file(&m, output_filename);
         }
 
         if (app.keyboard.pressed[KEY_D]) {
@@ -228,8 +229,9 @@ int main(int argc, char *argv[])
             mode = EDIT;
         }
 
+        nearest_point = closest_point(points, app.mouse.x, app.mouse.y);
+
         if (mode == DRAW) {
-            nearest_point = closest_point(points, app.mouse.x, app.mouse.y);
             if (app.mouse.pressed[MOUSE_BUTTON_LEFT]) {
                 vec2 *point = malloc(sizeof(vec2));
                 *point = new_vec2(app.mouse.x, app.mouse.y);
@@ -245,7 +247,6 @@ int main(int argc, char *argv[])
         }
 
         if (mode == EDIT) {
-            nearest_point = closest_point(points, app.mouse.x, app.mouse.y);
             if (app.mouse.pressed[MOUSE_BUTTON_LEFT]) {
                 selected_point = nearest_point;
             }
