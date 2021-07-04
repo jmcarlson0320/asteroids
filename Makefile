@@ -3,7 +3,7 @@ CFLAGS = -g -Wall -I/home/jmc/include
 LIBS = -L/home/jmc/lib -ltinyfw -lm -lSDL2
 EXE = asteroids
 
-$(EXE): main.o list.o particle.o ship.o utils.o asteroid.o
+$(EXE): main.o list.o particle.o ship.o utils.o asteroid.o game.o title.o
 	$(CC) $(INCLUDES) -o $@ $^ $(LIBS)
 
 wf: wf_util.o list.o
@@ -14,6 +14,8 @@ particle.o: particle.h
 ship.o: defs.h
 utils.o: defs.h
 asteroid.o: defs.h
+game.o: defs.h
+title.o: defs.h
 wf_util.o: list.h
 
 clean:
