@@ -31,6 +31,7 @@ enum game_states {
     RESET,
     GAME_OVER,
     SHUTDOWN,
+    TEST,
     NUM_STATES
 };
 
@@ -143,6 +144,13 @@ void asteroids_init(asteroids *game);
 void title_init(void *game_state);
 void title_update(void *game_state, float dt);
 void title_render(void *game_state);
+
+/******************************************************************************
+ * play.c
+ * ***************************************************************************/
+void play_init(void *game_state);
+void play_update(void *game_state, float dt);
+void play_render(void *game_state);
 
 /******************************************************************************
  * ship.c

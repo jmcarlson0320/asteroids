@@ -2,7 +2,6 @@
 
 void title_init(void *game_state)
 {
-    asteroids *game = (asteroids *) game_state;
 }
 
 void title_update(void *game_state, float dt)

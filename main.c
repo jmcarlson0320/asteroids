@@ -7,24 +7,6 @@
 #include "particle.h"
 #include "defs.h"
 
-void play_init(void *game_state)
-{
-    asteroids *game = (asteroids *) game_state;
-}
-
-void play_update(void *game_state, float dt)
-{
-    asteroids *game = (asteroids *) game_state;
-}
-
-void play_render(void *game_state)
-{
-    asteroids *game = (asteroids *) game_state;
-}
-
-/******************************************************************************
- * main loop
- * ***************************************************************************/
 int main(int argc, char *argv[])
 {
     App app = app_create(WIDTH, HEIGHT);
