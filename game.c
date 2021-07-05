@@ -206,18 +206,23 @@ void asteroids_init(asteroids *game)
     for (int i = 0; i < NUM_INPUTS; i++) {
         game->input[i] = 0;
     }
+
     srand(time(NULL));
+
     game->timer = 0.0f;
     game->cur_color = RED;
+
     ship_init(&game->player, WIDTH / 2, HEIGHT / 2);
+
     load_models();
     game->active_asteroids = list_new();
     game->inactive_asteroids = list_new();
-    for (int i = 0; i < 10; i++) {
+    for (int i = 0; i < MAX_ASTEROIDS; i++) {
         asteroid *a = malloc(sizeof(asteroid));
         asteroid_init(a);
         list_append(game->inactive_asteroids, a);
     }
+
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullet *b = &game->bullet_list[i];
         b->pos = new_vec2(0, 0);

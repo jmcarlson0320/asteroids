@@ -41,7 +41,6 @@ void test_update(void *game_state, float dt)
             }
         }
     }
-
 }
 
 void test_render(void *game_state)

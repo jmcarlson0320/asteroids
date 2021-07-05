@@ -13,6 +13,7 @@
 #define BULLET_LIFETIME 1
 #define ACTIVE 1
 #define INACTIVE 0
+#define MAX_ASTEROIDS 64
 
 enum colors {
     RED,
