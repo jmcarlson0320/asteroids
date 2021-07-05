@@ -60,7 +60,6 @@ void asteroids_render(asteroids *game)
     game->gamestate.render(game);
 }
 
-// functions for each event
 void gameover_event(asteroids *game)
 {
     game->gamestate.gameover(&game->gamestate);
@@ -118,8 +117,49 @@ void get_user_input(asteroids *game, App *app)
             list_append(game->inactive_asteroids, a);
         }
     }
+
+    if (app->keyboard.pressed[KEY_T]) {
+        transition_to_title(&game->gamestate);
+    }
+
+    if (app->keyboard.pressed[KEY_P]) {
+        transition_to_play(&game->gamestate);
+    }
+
+    if (app->keyboard.pressed[KEY_G]) {
+        transition_to_gameover(&game->gamestate);
+    }
+
+    if (app->keyboard.pressed[KEY_R]) {
+        transition_to_reset(&game->gamestate);
+    }
+
+    if (app->keyboard.pressed[KEY_D]) {
+        gameover_event(game);
+    }
+
+    if (app->keyboard.pressed[KEY_S]) {
+        start_event(game);
+    }
+
+    if (app->keyboard.pressed[KEY_I]) {
+        timer_event(game);
+    }
+
+    if (app->keyboard.pressed[KEY_K]) {
+        destroyed_event(game);
+    }
+
+    if (app->keyboard.pressed[KEY_L]) {
+        initials_entered_event(game);
+    }
+
+    if (app->keyboard.pressed[KEY_C]) {
+        level_cleared_event(game);
+    }
 }
 
+// separate this into update functions
 void handle_user_input(asteroids *game)
 {
     // ship rotation
@@ -163,29 +203,22 @@ void handle_user_input(asteroids *game)
 
 void asteroids_init(asteroids *game)
 {
-    default_state(&game->gamestate);
-
+    transition_to_title(&game->gamestate);
     for (int i = 0; i < NUM_INPUTS; i++) {
         game->input[i] = 0;
     }
-
     srand(time(NULL));
     game->timer = 0.0f;
-
     game->cur_color = RED;
-
     ship_init(&game->player, WIDTH / 2, HEIGHT / 2);
-
     load_models();
     game->active_asteroids = list_new();
     game->inactive_asteroids = list_new();
-
     for (int i = 0; i < 10; i++) {
         asteroid *a = malloc(sizeof(asteroid));
         asteroid_init(a);
         list_append(game->inactive_asteroids, a);
     }
-
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullet *b = &game->bullet_list[i];
         b->pos = new_vec2(0, 0);
@@ -195,6 +228,5 @@ void asteroids_init(asteroids *game)
         b->particles = emitter_create(200, b->pos.e[X_COOR], b->pos.e[Y_COOR]);
         emitter_reset_particles(&b->particles);
     }
-
     game->num_bullets = 0;
 }

@@ -6,22 +6,20 @@ static void start(gamestate *gamestate)
     transition_to_reset(gamestate);
 }
 
-// any state --> title
+static void title_update(asteroids *game, float dt)
+{
+}
+
+static void title_render(asteroids *game)
+{
+    clear_screen();
+    draw_text("title state", 0, 0, 0x0000ff);
+}
+
 void transition_to_title(gamestate *gamestate)
 {
     default_state(gamestate);
     gamestate->start = start;
-}
-
-void title_init(void *game_state)
-{
-}
-
-void title_update(void *game_state, float dt)
-{
-}
-
-void title_render(void *game_state)
-{
-    draw_text("title state", 0, 0, 0x0000ff);
+    gamestate->update = title_update;
+    gamestate->render = title_render;
 }

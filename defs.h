@@ -154,7 +154,6 @@ struct asteroids {
  * game.c
  * ***************************************************************************/
 extern const int COLORS[NUM_COLORS];
-void default_state(gamestate *gamestate);
 
 void get_user_input(asteroids *game, App *app);
 void handle_user_input(asteroids *game);
@@ -182,33 +181,21 @@ void test_render(void *game_state);
  * title.c
  * ***************************************************************************/
 void transition_to_title(gamestate *gamestate);
-void title_init(void *game_state);
-void title_update(void *game_state, float dt);
-void title_render(void *game_state);
 
 /******************************************************************************
  * reset.c
  * ***************************************************************************/
 void transition_to_reset(gamestate *gamestate);
-void reset_init(void *game_state);
-void reset_update(void *game_state, float dt);
-void reset_render(void *game_state);
 
 /******************************************************************************
  * play.c
  * ***************************************************************************/
 void transition_to_play(gamestate *gamestate);
-void play_init(void *game_state);
-void play_update(void *game_state, float dt);
-void play_render(void *game_state);
 
 /******************************************************************************
  * gameover.c
  * ***************************************************************************/
 void transition_to_gameover(gamestate *gamestate);
-void gameover_init(void *game_state);
-void gameover_update(void *game_state, float dt);
-void gameover_render(void *game_state);
 
 /******************************************************************************
  * ship.c
