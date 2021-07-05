@@ -15,3 +15,8 @@ vec2 wrap_coor(vec2 pos, int w, int h)
 
     return new;
 }
+
+void clear_screen()
+{
+    draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
+}

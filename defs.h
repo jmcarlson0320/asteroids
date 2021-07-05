@@ -110,9 +110,34 @@ typedef struct {
     Emitter particles;
 } bullet;
 
-typedef struct {
-    int state;
-    int event;
+typedef struct gamestate gamestate;
+typedef struct asteroids asteroids;
+
+//function pointers for events
+typedef void (*on_gameover)(gamestate *gamestate);
+typedef void (*on_start)(gamestate *gamestate);
+typedef void (*on_timer)(gamestate *gamestate);
+typedef void (*on_destroyed)(gamestate *gamestate);
+typedef void (*on_initials_entered)(gamestate *gamestate);
+typedef void (*on_level_cleared)(gamestate *gamestate);
+
+//function pointers for update and render
+typedef void (*on_update)(asteroids *game, float dt);
+typedef void (*on_render)(asteroids *game);
+
+struct gamestate {
+    on_update update;
+    on_render render;
+    on_gameover gameover;
+    on_start start;
+    on_timer timer;
+    on_destroyed destroyed;
+    on_initials_entered initials_entered;
+    on_level_cleared cleared;
+};
+
+struct asteroids {
+    gamestate gamestate;
     int input[NUM_INPUTS];
     float timer;
     int cur_color;
@@ -123,34 +148,67 @@ typedef struct {
     int num_bullets;
     Bitmap title;
     Bitmap score;
-    void (*update)(void *, float);
-    void (*render)(void *);
-} asteroids;
+};
 
 /******************************************************************************
  * game.c
  * ***************************************************************************/
 extern const int COLORS[NUM_COLORS];
+void default_state(gamestate *gamestate);
 
-int check_for_event(asteroids *game);
-int next_state(int current_state, int event);
 void get_user_input(asteroids *game, App *app);
 void handle_user_input(asteroids *game);
 void asteroids_init(asteroids *game);
+void default_state(gamestate *gamestate);
+
+void asteroids_update(asteroids *game, float dt);
+void asteroids_render(asteroids *game);
+
+void gameover_event(asteroids *game);
+void start_event(asteroids *game);
+void timer_event(asteroids *game);
+void destroyed_event(asteroids *game);
+void initials_entered_event(asteroids *game);
+void level_cleared_event(asteroids *game);
+
+/******************************************************************************
+ * test.c
+ * ***************************************************************************/
+void test_init(void *game_state);
+void test_update(void *game_state, float dt);
+void test_render(void *game_state);
 
 /******************************************************************************
  * title.c
  * ***************************************************************************/
+void transition_to_title(gamestate *gamestate);
 void title_init(void *game_state);
 void title_update(void *game_state, float dt);
 void title_render(void *game_state);
 
 /******************************************************************************
+ * reset.c
+ * ***************************************************************************/
+void transition_to_reset(gamestate *gamestate);
+void reset_init(void *game_state);
+void reset_update(void *game_state, float dt);
+void reset_render(void *game_state);
+
+/******************************************************************************
  * play.c
  * ***************************************************************************/
+void transition_to_play(gamestate *gamestate);
 void play_init(void *game_state);
 void play_update(void *game_state, float dt);
 void play_render(void *game_state);
+
+/******************************************************************************
+ * gameover.c
+ * ***************************************************************************/
+void transition_to_gameover(gamestate *gamestate);
+void gameover_init(void *game_state);
+void gameover_update(void *game_state, float dt);
+void gameover_render(void *game_state);
 
 /******************************************************************************
  * ship.c
@@ -171,5 +229,6 @@ void asteroid_render(asteroid *a);
  * util.c
  * ***************************************************************************/
 vec2 wrap_coor(vec2 pos, int w, int h);
+void clear_screen();
 
 #endif // DEFS_H

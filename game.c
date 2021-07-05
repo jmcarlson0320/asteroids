@@ -1,4 +1,5 @@
 #include "defs.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
 
@@ -22,49 +23,73 @@ const int KEY_MAP[NUM_INPUTS] = {
     [QUIT] = KEY_Q
 };
 
-int check_for_event(asteroids *game)
+static void default_state_transition(gamestate *gamestate)
 {
-    return NO_EVENT;
-}
-int next_state(int current_state, int event)
-{
-    if (event == EXIT) {
-        return SHUTDOWN;
-    }
-
-    int next = current_state;
-    switch (current_state) {
-        case TITLE:
-            if (event == START) {
-                next = RESET;
-            }
-            break;
-        case PLAY:
-            if (event == DESTROYED) {
-                next = RESET;
-            } else if (event == LEVEL_CLEARED) {
-                next = RESET;
-            } else if (event == DEFEATED) {
-                next = GAME_OVER;
-            }
-            break;
-        case RESET:
-            if (event == TIMER) {
-                next = PLAY;
-            }
-            break;
-        case GAME_OVER:
-            if (event == INITIALS_ENTERED) {
-                next = TITLE;
-            }
-            break;
-        default:
-            break;
-    }
-
-    return next;
+    printf("state transition not defined!!!\n");
 }
 
+static void default_update(asteroids *game, float dt)
+{
+    printf("update function not defined!!!\n");
+}
+
+static void default_render(asteroids *game)
+{
+    printf("render function not defined!!!\n");
+}
+
+void default_state(gamestate *gamestate)
+{
+    gamestate->update = default_update;
+    gamestate->render = default_render;
+    gamestate->gameover = default_state_transition;
+    gamestate->start = default_state_transition;
+    gamestate->timer = default_state_transition;
+    gamestate->destroyed = default_state_transition;
+    gamestate->initials_entered = default_state_transition;
+    gamestate->cleared = default_state_transition;
+}
+
+void asteroids_update(asteroids *game, float dt)
+{
+    game->gamestate.update(game, dt);
+}
+
+void asteroids_render(asteroids *game)
+{
+    game->gamestate.render(game);
+}
+
+// functions for each event
+void gameover_event(asteroids *game)
+{
+    game->gamestate.gameover(&game->gamestate);
+}
+
+void start_event(asteroids *game)
+{
+    game->gamestate.start(&game->gamestate);
+}
+
+void timer_event(asteroids *game)
+{
+    game->gamestate.timer(&game->gamestate);
+}
+
+void destroyed_event(asteroids *game)
+{
+    game->gamestate.destroyed(&game->gamestate);
+}
+
+void initials_entered_event(asteroids *game)
+{
+    game->gamestate.initials_entered(&game->gamestate);
+}
+
+void level_cleared_event(asteroids *game)
+{
+    game->gamestate.cleared(&game->gamestate);
+}
 
 void get_user_input(asteroids *game, App *app)
 {
@@ -138,8 +163,7 @@ void handle_user_input(asteroids *game)
 
 void asteroids_init(asteroids *game)
 {
-    game->state = TITLE;
-    game->event = NO_EVENT;
+    default_state(&game->gamestate);
 
     for (int i = 0; i < NUM_INPUTS; i++) {
         game->input[i] = 0;
@@ -155,6 +179,7 @@ void asteroids_init(asteroids *game)
     load_models();
     game->active_asteroids = list_new();
     game->inactive_asteroids = list_new();
+
     for (int i = 0; i < 10; i++) {
         asteroid *a = malloc(sizeof(asteroid));
         asteroid_init(a);
@@ -170,8 +195,6 @@ void asteroids_init(asteroids *game)
         b->particles = emitter_create(200, b->pos.e[X_COOR], b->pos.e[Y_COOR]);
         emitter_reset_particles(&b->particles);
     }
-    game->num_bullets = 0;
 
-    game->update = title_update;
-    game->render = title_render;
+    game->num_bullets = 0;
 }

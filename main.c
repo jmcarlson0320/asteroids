@@ -16,18 +16,8 @@ int main(int argc, char *argv[])
     while (app.running) {
         app_update(&app);
         get_user_input(&game, &app);
-
-        // state transition
-        game.event = check_for_event(&game);
-        if (game.event != NO_EVENT) {
-            game.state = next_state(game.state, game.event);
-            game.event = NO_EVENT;
-        }
-
-        // the function pointers point to the update/render functions of the current gamestate
-        (*game.update)(&game, app.time.dt_sec);
-        (*game.render)(&game);
-
+        asteroids_update(&game, app.time.dt_sec);
+        asteroids_render(&game);
         app_draw_graphics(&app);
     }
     app_quit(&app);
