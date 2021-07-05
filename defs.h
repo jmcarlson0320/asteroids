@@ -95,7 +95,6 @@ typedef struct {
 
 typedef struct {
     vec2 vel;
-    int size;
     float angle;
     float ang_vel;
     vec2 pos;
@@ -159,17 +158,18 @@ extern const int COLORS[NUM_COLORS];
 void get_user_input(asteroids *game, App *app);
 void handle_user_input(asteroids *game);
 void asteroids_init(asteroids *game);
-void default_state(gamestate *gamestate);
 
+void default_state(gamestate *gamestate);
 void asteroids_update(asteroids *game, float dt);
 void asteroids_render(asteroids *game);
-
 void gameover_event(asteroids *game);
 void start_event(asteroids *game);
 void timer_event(asteroids *game);
 void destroyed_event(asteroids *game);
 void initials_entered_event(asteroids *game);
 void level_cleared_event(asteroids *game);
+void clear_asteroids(asteroids *game);
+int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
 
 /******************************************************************************
  * test.c
@@ -209,7 +209,7 @@ void ship_render(ship *s);
  * asteroid.c
  * ***************************************************************************/
 void load_models();
-void asteroid_init(asteroid *a);
+void asteroid_init(asteroid *a, enum asteroid_type type);
 void asteroid_update(asteroid *a, float dt);
 void asteroid_render(asteroid *a);
 

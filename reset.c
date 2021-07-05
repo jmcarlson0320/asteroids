@@ -1,10 +1,10 @@
 #include "defs.h"
 
-#define PAUSE_LENGTH 2.0f
+#define PAUSE_LENGTH 3.0f
 
 static float timer_sec = 0;
 static float timer_display = 0;
-static int display_flag = 1;
+static int display_flag = ACTIVE;
 
 static void timer(asteroids *game)
 {
@@ -42,6 +42,5 @@ void transition_to_reset(asteroids *game)
 
     timer_sec = 0.0f;
     timer_display = 0.0f;
-    display_flag = 1;
+    display_flag = ACTIVE;
 }
-

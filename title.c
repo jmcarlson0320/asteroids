@@ -1,6 +1,6 @@
 #include "defs.h"
+#include <stdlib.h>
 
-// start game event
 static void start(asteroids *game)
 {
     transition_to_reset(game);
@@ -50,7 +50,7 @@ void transition_to_title(asteroids *game)
     for (int i = 0; i < 10; i++) {
         asteroid *a = list_pop(game->inactive_asteroids, 0);
         if (a) {
-            asteroid_init(a);
+            asteroid_init(a, rand() % 3);
             list_append(game->active_asteroids, a);
         }
     }

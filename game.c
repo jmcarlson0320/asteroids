@@ -104,11 +104,7 @@ void get_user_input(asteroids *game, App *app)
     }
 
     if (app->keyboard.pressed[KEY_N]) {
-        asteroid *a = list_pop(game->inactive_asteroids, 0);
-        if (a) {
-            asteroid_init(a);
-            list_append(game->active_asteroids, a);
-        }
+        spawn_asteroid(game, 10, 10, rand() % 3);
     }
 
     if (app->keyboard.pressed[KEY_M]) {
@@ -134,7 +130,7 @@ void get_user_input(asteroids *game, App *app)
         transition_to_reset(game);
     }
 
-    if (app->keyboard.pressed[KEY_D]) {
+    if (app->keyboard.pressed[KEY_Y]) {
         gameover_event(game);
     }
 
@@ -159,48 +155,6 @@ void get_user_input(asteroids *game, App *app)
     }
 }
 
-// separate this into update functions
-void handle_user_input(asteroids *game)
-{
-    // ship rotation
-    ship *s = &game->player;
-    if (game->input[LEFT] && game->input[RIGHT]) {
-        s->ctl_rotate = ROTATE_STOP;
-    } else if (game->input[LEFT]) {
-        s->ctl_rotate = ROTATE_LEFT;
-    } else if (game->input[RIGHT]) {
-        s->ctl_rotate = ROTATE_RIGHT;
-    } else {
-        s->ctl_rotate = ROTATE_STOP;
-    }
-
-    // ship thrust
-    if (game->input[THRUST]) {
-        s->ctl_thrust = 1;
-    } else {
-        s->ctl_thrust = 0;
-    }
-
-    // bullets
-    if (game->input[FIRE] && game->num_bullets < MAX_BULLETS) {
-        for (int i = 0; i < MAX_BULLETS; i++) {
-            bullet *b = &game->bullet_list[i];
-            if (!b->active_flag) {
-                b->active_flag = ACTIVE;
-                b->timer = 0;
-                b->pos = s->pos;
-                b->vel = vec2_unit_vec(s->angle);
-                emitter_reset_particles(&b->particles);
-                b->particles.pos = b->pos;
-                vec2_mult(&b->vel, &b->vel, 500);
-                vec2_add(&b->vel, &b->vel, &s->vel);
-                game->num_bullets++;
-                break;
-            }
-        }
-    }
-}
-
 void asteroids_init(asteroids *game)
 {
     for (int i = 0; i < NUM_INPUTS; i++) {
@@ -219,7 +173,7 @@ void asteroids_init(asteroids *game)
     game->inactive_asteroids = list_new();
     for (int i = 0; i < MAX_ASTEROIDS; i++) {
         asteroid *a = malloc(sizeof(asteroid));
-        asteroid_init(a);
+        asteroid_init(a, LARGE);
         list_append(game->inactive_asteroids, a);
     }
 
@@ -235,4 +189,39 @@ void asteroids_init(asteroids *game)
     game->num_bullets = 0;
 
     transition_to_title(game);
+}
+
+void clear_asteroids(asteroids *game)
+{
+    List_Iterator it = list_iterator(game->active_asteroids);
+    asteroid *a;
+    List *to_remove = list_new();
+    while (list_has_next(&it)) {
+        a = list_next(&it);
+        list_append(to_remove, a);
+    }
+
+    it = list_iterator(to_remove);
+    while (list_has_next(&it)) {
+        a = list_next(&it);
+        if (a) {
+            list_remove(game->active_asteroids, a);
+            list_append(game->inactive_asteroids, a);
+        }
+    }
+    list_delete(to_remove);
+}
+
+int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type)
+{
+    int success = 0;
+    asteroid *a = list_pop(game->inactive_asteroids, 0);
+    a->pos = new_vec2(x, y);
+    a->type = type;
+    if (a) {
+        asteroid_init(a, type);
+        list_append(game->active_asteroids, a);
+        success = 1;
+    }
+    return success;
 }

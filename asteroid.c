@@ -43,14 +43,13 @@ void load_models()
     }
 }
 
-void asteroid_init(asteroid *a)
+void asteroid_init(asteroid *a, enum asteroid_type type)
 {
     a->vel = new_vec2((float) rand() / (float) RAND_MAX * 100.0f - 50.0f, (float) rand() / (float) RAND_MAX * 100.0f - 50.0f);
-    a->size = 7;
     a->angle = (float) rand() / (float) RAND_MAX * 2.0f * M_PI;
     a->ang_vel = (float) rand() / (float) RAND_MAX * 0.02f - 0.01f;
     a->pos = new_vec2((float) rand() / (float) RAND_MAX * WIDTH, (float) rand() / (float) RAND_MAX * HEIGHT);
-    a->type = rand() % NUM_TYPES;
+    a->type = type;
     a->model = rand() % NUM_MODELS;
 }
 
