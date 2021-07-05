@@ -114,12 +114,12 @@ typedef struct gamestate gamestate;
 typedef struct asteroids asteroids;
 
 //function pointers for events
-typedef void (*on_gameover)(gamestate *gamestate);
-typedef void (*on_start)(gamestate *gamestate);
-typedef void (*on_timer)(gamestate *gamestate);
-typedef void (*on_destroyed)(gamestate *gamestate);
-typedef void (*on_initials_entered)(gamestate *gamestate);
-typedef void (*on_level_cleared)(gamestate *gamestate);
+typedef void (*on_gameover)(asteroids *game);
+typedef void (*on_start)(asteroids *game);
+typedef void (*on_timer)(asteroids *game);
+typedef void (*on_destroyed)(asteroids *game);
+typedef void (*on_initials_entered)(asteroids *game);
+typedef void (*on_level_cleared)(asteroids *game);
 
 //function pointers for update and render
 typedef void (*on_update)(asteroids *game, float dt);
@@ -180,22 +180,22 @@ void test_render(void *game_state);
 /******************************************************************************
  * title.c
  * ***************************************************************************/
-void transition_to_title(gamestate *gamestate);
+void transition_to_title(asteroids *game);
 
 /******************************************************************************
  * reset.c
  * ***************************************************************************/
-void transition_to_reset(gamestate *gamestate);
+void transition_to_reset(asteroids *game);
 
 /******************************************************************************
  * play.c
  * ***************************************************************************/
-void transition_to_play(gamestate *gamestate);
+void transition_to_play(asteroids *game);
 
 /******************************************************************************
  * gameover.c
  * ***************************************************************************/
-void transition_to_gameover(gamestate *gamestate);
+void transition_to_gameover(asteroids *game);
 
 /******************************************************************************
  * ship.c

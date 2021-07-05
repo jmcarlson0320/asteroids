@@ -1,8 +1,8 @@
 #include "defs.h"
 
-static void timer(gamestate *gamestate)
+static void timer(asteroids *game)
 {
-    transition_to_play(gamestate);
+    transition_to_play(game);
 }
 
 static void reset_update(asteroids *game, float dt)
@@ -15,11 +15,11 @@ static void reset_render(asteroids *game)
     draw_text("reset state", 0, 0, 0x00ffff);
 }
 
-void transition_to_reset(gamestate *gamestate)
+void transition_to_reset(asteroids *game)
 {
-    default_state(gamestate);
-    gamestate->timer = timer;
-    gamestate->update = reset_update;
-    gamestate->render= reset_render;
+    default_state(&game->gamestate);
+    game->gamestate.timer = timer;
+    game->gamestate.update = reset_update;
+    game->gamestate.render= reset_render;
 }
 

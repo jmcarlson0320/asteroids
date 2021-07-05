@@ -23,7 +23,7 @@ const int KEY_MAP[NUM_INPUTS] = {
     [QUIT] = KEY_Q
 };
 
-static void default_state_transition(gamestate *gamestate)
+static void default_state_transition(asteroids *game)
 {
     printf("state transition not defined!!!\n");
 }
@@ -62,32 +62,32 @@ void asteroids_render(asteroids *game)
 
 void gameover_event(asteroids *game)
 {
-    game->gamestate.gameover(&game->gamestate);
+    game->gamestate.gameover(game);
 }
 
 void start_event(asteroids *game)
 {
-    game->gamestate.start(&game->gamestate);
+    game->gamestate.start(game);
 }
 
 void timer_event(asteroids *game)
 {
-    game->gamestate.timer(&game->gamestate);
+    game->gamestate.timer(game);
 }
 
 void destroyed_event(asteroids *game)
 {
-    game->gamestate.destroyed(&game->gamestate);
+    game->gamestate.destroyed(game);
 }
 
 void initials_entered_event(asteroids *game)
 {
-    game->gamestate.initials_entered(&game->gamestate);
+    game->gamestate.initials_entered(game);
 }
 
 void level_cleared_event(asteroids *game)
 {
-    game->gamestate.cleared(&game->gamestate);
+    game->gamestate.cleared(game);
 }
 
 void get_user_input(asteroids *game, App *app)
@@ -119,19 +119,19 @@ void get_user_input(asteroids *game, App *app)
     }
 
     if (app->keyboard.pressed[KEY_T]) {
-        transition_to_title(&game->gamestate);
+        transition_to_title(game);
     }
 
     if (app->keyboard.pressed[KEY_P]) {
-        transition_to_play(&game->gamestate);
+        transition_to_play(game);
     }
 
     if (app->keyboard.pressed[KEY_G]) {
-        transition_to_gameover(&game->gamestate);
+        transition_to_gameover(game);
     }
 
     if (app->keyboard.pressed[KEY_R]) {
-        transition_to_reset(&game->gamestate);
+        transition_to_reset(game);
     }
 
     if (app->keyboard.pressed[KEY_D]) {
@@ -203,7 +203,7 @@ void handle_user_input(asteroids *game)
 
 void asteroids_init(asteroids *game)
 {
-    transition_to_title(&game->gamestate);
+    transition_to_title(game);
     for (int i = 0; i < NUM_INPUTS; i++) {
         game->input[i] = 0;
     }

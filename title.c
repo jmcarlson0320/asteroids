@@ -1,9 +1,9 @@
 #include "defs.h"
 
 // start game event
-static void start(gamestate *gamestate)
+static void start(asteroids *game)
 {
-    transition_to_reset(gamestate);
+    transition_to_reset(game);
 }
 
 static void title_update(asteroids *game, float dt)
@@ -16,10 +16,10 @@ static void title_render(asteroids *game)
     draw_text("title state", 0, 0, 0x0000ff);
 }
 
-void transition_to_title(gamestate *gamestate)
+void transition_to_title(asteroids *game)
 {
-    default_state(gamestate);
-    gamestate->start = start;
-    gamestate->update = title_update;
-    gamestate->render = title_render;
+    default_state(&game->gamestate);
+    game->gamestate.start = start;
+    game->gamestate.update = title_update;
+    game->gamestate.render = title_render;
 }

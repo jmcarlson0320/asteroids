@@ -1,18 +1,18 @@
 #include "defs.h"
 
-static void destroyed(gamestate *gamestate)
+static void destroyed(asteroids *game)
 {
-    transition_to_reset(gamestate);
+    transition_to_reset(game);
 }
 
-static void gameover(gamestate *gamestate)
+static void gameover(asteroids *game)
 {
-    transition_to_gameover(gamestate);
+    transition_to_gameover(game);
 }
 
-static void cleared(gamestate *gamestate)
+static void cleared(asteroids *game)
 {
-    transition_to_reset(gamestate);
+    transition_to_reset(game);
 }
 
 static void play_update(asteroids *game, float dt)
@@ -25,12 +25,12 @@ static void play_render(asteroids *game)
     draw_text("play state", 0, 0, 0xffff00);
 }
 
-void transition_to_play(gamestate *gamestate)
+void transition_to_play(asteroids *game)
 {
-    default_state(gamestate);
-    gamestate->destroyed = destroyed;
-    gamestate->gameover = gameover;
-    gamestate->cleared = cleared;
-    gamestate->update = play_update;
-    gamestate->render = play_render;
+    default_state(&game->gamestate);
+    game->gamestate.destroyed = destroyed;
+    game->gamestate.gameover = gameover;
+    game->gamestate.cleared = cleared;
+    game->gamestate.update = play_update;
+    game->gamestate.render = play_render;
 }
