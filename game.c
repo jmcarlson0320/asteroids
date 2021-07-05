@@ -203,7 +203,6 @@ void handle_user_input(asteroids *game)
 
 void asteroids_init(asteroids *game)
 {
-    transition_to_title(game);
     for (int i = 0; i < NUM_INPUTS; i++) {
         game->input[i] = 0;
     }
@@ -229,4 +228,6 @@ void asteroids_init(asteroids *game)
         emitter_reset_particles(&b->particles);
     }
     game->num_bullets = 0;
+
+    transition_to_title(game);
 }
