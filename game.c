@@ -90,19 +90,8 @@ void level_cleared_event(asteroids *game)
     game->gamestate.cleared(game);
 }
 
-void get_user_input(asteroids *game, App *app)
+static void debug_controls(asteroids *game, App *app)
 {
-    game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
-
-    // take keyboard state from app and update game's controls
-    for (int i = 1; i < NUM_INPUTS; i++) {
-        game->input[i] = app->keyboard.down[KEY_MAP[i]];
-    }
-
-    if (game->input[QUIT] == ACTIVE) {
-        app->running = 0;
-    }
-
     if (app->keyboard.pressed[KEY_N]) {
         spawn_asteroid(game, 10, 10, rand() % 3);
     }
@@ -153,6 +142,28 @@ void get_user_input(asteroids *game, App *app)
     if (app->keyboard.pressed[KEY_C]) {
         level_cleared_event(game);
     }
+
+    if (app->keyboard.pressed[KEY_1]) {
+        transition_to_test(game);
+    }
+}
+
+void get_user_input(asteroids *game, App *app)
+{
+    game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
+
+    // take keyboard state from app and update game's controls
+    for (int i = 1; i < NUM_INPUTS; i++) {
+        game->input[i] = app->keyboard.down[KEY_MAP[i]];
+    }
+
+    if (game->input[QUIT] == ACTIVE) {
+        app->running = 0;
+    }
+
+#ifdef DEBUG
+    debug_controls(game, app);
+#endif // DEBUG
 }
 
 void asteroids_init(asteroids *game)
@@ -188,6 +199,10 @@ void asteroids_init(asteroids *game)
     }
     game->num_bullets = 0;
 
+    game->score = 0;
+
+    game->enemy_timer = 0;
+
     transition_to_title(game);
 }
 
@@ -216,12 +231,47 @@ int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type)
 {
     int success = 0;
     asteroid *a = list_pop(game->inactive_asteroids, 0);
-    a->pos = new_vec2(x, y);
-    a->type = type;
     if (a) {
         asteroid_init(a, type);
+        a->pos = new_vec2(x, y);
         list_append(game->active_asteroids, a);
         success = 1;
     }
     return success;
+}
+
+void check_collisions(asteroids *game)
+{
+    List *to_remove = list_new();
+    List_Iterator it = list_iterator(game->active_asteroids);
+    while (list_has_next(&it)) {
+        asteroid *a = list_next(&it);
+        for (int i = 0; i < MAX_BULLETS; i++) {
+            bullet *b = &game->bullet_list[i];
+            if (b->active_flag) {
+                float radius = asteroid_scales[a->type];
+                vec2 *origin = &a->pos;
+                vec2 *point = &b->pos;
+                if (point_in_circle(point, origin, radius)) {
+                    b->active_flag = INACTIVE;
+                    b->timer = 0;
+                    game->num_bullets--;
+                    list_append(to_remove, a);
+                    float x = a->pos.e[X_COOR];
+                    float y = a->pos.e[Y_COOR];
+                    if (a->type > SMALL) {
+                        spawn_asteroid(game, x, y, a->type - 1);
+                        spawn_asteroid(game, x, y, a->type - 1);
+                    }
+                }
+            }
+        }
+    }
+    it = list_iterator(to_remove);
+    while (list_has_next(&it)) {
+        asteroid *a = list_next(&it);
+        list_remove(game->active_asteroids, a);
+        list_append(game->inactive_asteroids, a);
+    }
+    list_delete(to_remove);
 }

@@ -47,6 +47,7 @@ void transition_to_title(asteroids *game)
     game->gamestate.update = title_update;
     game->gamestate.render = title_render;
 
+    clear_asteroids(game);
     for (int i = 0; i < 10; i++) {
         asteroid *a = list_pop(game->inactive_asteroids, 0);
         if (a) {

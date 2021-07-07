@@ -20,3 +20,20 @@ void clear_screen()
 {
     draw_fill_rect(0, 0, WIDTH - 1, HEIGHT - 1, 0x000000);
 }
+
+float dist(vec2 *u, vec2 *v)
+{
+    vec2 dist_vec;
+    vec2_sub(&dist_vec, u, v);
+    return vec2_len(&dist_vec);
+}
+
+int point_in_circle(vec2 *point, vec2 *origin, float radius)
+{
+    return (dist(point, origin) < radius);
+}
+
+int circle_overlap(vec2 *origin_a, float radius_a, vec2 *origin_b, float radius_b)
+{
+    return (dist(origin_a, origin_b) < radius_a + radius_b);
+}

@@ -2,6 +2,7 @@ refactor
     consistent first-class ADT
     each component in its own file
     globals -> static variables in component file
+    "pass around a struct/context" or "static variables in source file"?
 assets
     enemy ship
     particles

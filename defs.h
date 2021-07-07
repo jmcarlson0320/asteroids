@@ -121,7 +121,7 @@ typedef void (*on_destroyed)(asteroids *game);
 typedef void (*on_initials_entered)(asteroids *game);
 typedef void (*on_level_cleared)(asteroids *game);
 
-//function pointers for update and render
+// each state implements versions of these
 typedef void (*on_update)(asteroids *game, float dt);
 typedef void (*on_render)(asteroids *game);
 
@@ -141,13 +141,15 @@ struct asteroids {
     int input[NUM_INPUTS];
     float timer;
     int cur_color;
+    int score;
+    float enemy_timer;
     ship player;
     List *active_asteroids;
     List *inactive_asteroids;
     bullet bullet_list[MAX_BULLETS];
     int num_bullets;
     Bitmap title;
-    Bitmap score;
+    Bitmap score_board;
 };
 
 /******************************************************************************
@@ -160,6 +162,18 @@ void handle_user_input(asteroids *game);
 void asteroids_init(asteroids *game);
 
 void default_state(gamestate *gamestate);
+
+void clear_asteroids(asteroids *game);
+int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
+
+// state transitions
+void transition_to_title(asteroids *game);
+void transition_to_reset(asteroids *game);
+void transition_to_play(asteroids *game);
+void transition_to_gameover(asteroids *game);
+void transition_to_test(asteroids *game);
+
+// events
 void asteroids_update(asteroids *game, float dt);
 void asteroids_render(asteroids *game);
 void gameover_event(asteroids *game);
@@ -168,35 +182,8 @@ void timer_event(asteroids *game);
 void destroyed_event(asteroids *game);
 void initials_entered_event(asteroids *game);
 void level_cleared_event(asteroids *game);
-void clear_asteroids(asteroids *game);
-int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
 
-/******************************************************************************
- * test.c
- * ***************************************************************************/
-void test_init(void *game_state);
-void test_update(void *game_state, float dt);
-void test_render(void *game_state);
-
-/******************************************************************************
- * title.c
- * ***************************************************************************/
-void transition_to_title(asteroids *game);
-
-/******************************************************************************
- * reset.c
- * ***************************************************************************/
-void transition_to_reset(asteroids *game);
-
-/******************************************************************************
- * play.c
- * ***************************************************************************/
-void transition_to_play(asteroids *game);
-
-/******************************************************************************
- * gameover.c
- * ***************************************************************************/
-void transition_to_gameover(asteroids *game);
+void check_collisions(asteroids *game);
 
 /******************************************************************************
  * ship.c
@@ -208,6 +195,8 @@ void ship_render(ship *s);
 /******************************************************************************
  * asteroid.c
  * ***************************************************************************/
+extern int asteroid_scales[NUM_TYPES];
+
 void load_models();
 void asteroid_init(asteroid *a, enum asteroid_type type);
 void asteroid_update(asteroid *a, float dt);
@@ -218,5 +207,8 @@ void asteroid_render(asteroid *a);
  * ***************************************************************************/
 vec2 wrap_coor(vec2 pos, int w, int h);
 void clear_screen();
+float dist(vec2 *u, vec2 *v);
+int point_in_circle(vec2 *point, vec2 *origin, float radius);
+int circle_overlap(vec2 *origin_a, float radius_a, vec2 *origin_b, float radius_b);
 
 #endif // DEFS_H

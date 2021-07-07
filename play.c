@@ -88,6 +88,8 @@ static void play_update(asteroids *game, float dt)
             }
         }
     }
+
+    check_collisions(game);
 }
 
 static void play_render(asteroids *game)
@@ -128,6 +130,8 @@ void transition_to_play(asteroids *game)
     spawn_asteroid(game, rand() % WIDTH * 0.7, rand() % HEIGHT * 0.7, LARGE);
 
     // zero out score
+    game->score = 0;
 
     // reset enemy timer
+    game->enemy_timer = 0;
 }
