@@ -5,13 +5,15 @@
 #include "particle.h"
 #include "list.h"
 
-#define SCALE_FACTOR 4
+#define SCALE_FACTOR 3
 #define WIDTH (1920 / SCALE_FACTOR)
 #define HEIGHT (1080 / SCALE_FACTOR)
 #define NUM_POINTS_ASTEROID 11
 #define MAX_BULLETS 4
 #define BULLET_SPEED 300
 #define BULLET_LIFETIME 1
+#define NUM_EXPLOSION_PARTICLES 10
+#define MAX_EXPLOSIONS 32
 #define ACTIVE 1
 #define INACTIVE 0
 #define MAX_ASTEROIDS 64
@@ -110,6 +112,18 @@ typedef struct {
     float timer;
 } bullet;
 
+typedef struct {
+    vec2 pos;
+    vec2 vel;
+} explosion_piece;
+
+typedef struct {
+    explosion_piece pieces[NUM_EXPLOSION_PARTICLES];
+    vec2 pos;
+    float lifetime;
+    int active_flag;
+} explosion;
+
 typedef struct gamestate gamestate;
 typedef struct asteroids asteroids;
 
@@ -148,6 +162,7 @@ struct asteroids {
     List *inactive_asteroids;
     bullet bullet_list[MAX_BULLETS];
     int num_bullets;
+    explosion explosion_list[MAX_EXPLOSIONS];
     Bitmap title;
     Bitmap score_board;
 };
@@ -165,9 +180,11 @@ void default_state(gamestate *gamestate);
 
 void clear_asteroids(asteroids *game);
 int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
+explosion *find_inactive_explosion(explosion *expl_array, int size);
 
 // state transitions
 void transition_to_title(asteroids *game);
+void transition_to_start(asteroids *game);
 void transition_to_reset(asteroids *game);
 void transition_to_play(asteroids *game);
 void transition_to_gameover(asteroids *game);
@@ -182,8 +199,6 @@ void timer_event(asteroids *game);
 void destroyed_event(asteroids *game);
 void initials_entered_event(asteroids *game);
 void level_cleared_event(asteroids *game);
-
-void check_collisions(asteroids *game);
 
 /******************************************************************************
  * ship.c
@@ -203,6 +218,14 @@ void asteroid_update(asteroid *a, float dt);
 void asteroid_render(asteroid *a);
 
 /******************************************************************************
+ * explosion.c
+ * ***************************************************************************/
+void explosion_init(explosion *e);
+void explosion_start(explosion *e, int x, int y);
+void explosion_update(explosion *e, float dt);
+void explosion_render(explosion *e);
+
+/******************************************************************************
  * util.c
  * ***************************************************************************/
 vec2 wrap_coor(vec2 pos, int w, int h);
@@ -210,5 +233,6 @@ void clear_screen();
 float dist(vec2 *u, vec2 *v);
 int point_in_circle(vec2 *point, vec2 *origin, float radius);
 int circle_overlap(vec2 *origin_a, float radius_a, vec2 *origin_b, float radius_b);
+float rand_float(float min, float max);
 
 #endif // DEFS_H

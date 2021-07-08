@@ -3,7 +3,20 @@
 
 static void start(asteroids *game)
 {
-    transition_to_reset(game);
+    // center ship
+    ship_init(&game->player, WIDTH / 2, HEIGHT / 2);
+
+    // two large asteroids
+    clear_asteroids(game);
+    spawn_asteroid(game, rand() % WIDTH * 0.7, rand() % HEIGHT * 0.7, LARGE);
+    spawn_asteroid(game, rand() % WIDTH * 0.7, rand() % HEIGHT * 0.7, LARGE);
+
+    // zero out score
+    game->score = 0;
+
+    // reset enemy timer
+    game->enemy_timer = 0;
+    transition_to_start(game);
 }
 
 static void title_update(asteroids *game, float dt)

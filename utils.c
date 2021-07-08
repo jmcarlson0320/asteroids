@@ -1,4 +1,5 @@
 #include "defs.h"
+#include <stdlib.h>
 
 vec2 wrap_coor(vec2 pos, int w, int h)
 {
@@ -36,4 +37,9 @@ int point_in_circle(vec2 *point, vec2 *origin, float radius)
 int circle_overlap(vec2 *origin_a, float radius_a, vec2 *origin_b, float radius_b)
 {
     return (dist(origin_a, origin_b) < radius_a + radius_b);
+}
+
+float rand_float(float min, float max)
+{
+    return (float) rand() / (float) RAND_MAX * (max - min) + min;
 }

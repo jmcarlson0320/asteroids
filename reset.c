@@ -1,6 +1,6 @@
 #include "defs.h"
 
-#define PAUSE_LENGTH 3.0f
+#define PAUSE_LENGTH 1.5f
 
 static float timer_sec = 0;
 static float timer_display = 0;
@@ -19,17 +19,66 @@ static void reset_update(asteroids *game, float dt)
         timer(game);
     }
 
-    if (timer_display >= 0.5f) {
+    if (timer_display >= 0.2f) {
         timer_display = 0.0f;
         display_flag = !display_flag;
     }
+
+    List_Iterator it = list_iterator(game->active_asteroids);
+    asteroid *a;
+    while ((a = list_next(&it))) {
+        asteroid_update(a, dt);
+    }
+
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullet *b = &game->bullet_list[i];
+        if (b->active_flag) {
+            if (b->timer > BULLET_LIFETIME) {
+                b->active_flag = INACTIVE;
+                game->num_bullets--;
+            } else {
+                vec2 ds;
+                vec2_mult(&ds, &b->vel, dt);
+                vec2_add(&b->pos, &b->pos, &ds);
+                b->timer += dt;
+            }
+        }
+    }
+
+    for (int i = 0; i < MAX_EXPLOSIONS; i++) {
+        explosion *e = &game->explosion_list[i];
+        if (e->active_flag) {
+            explosion_update(e, dt);
+        }
+    }
+
 }
 
 static void reset_render(asteroids *game)
 {
     clear_screen();
-    if (display_flag) {
-        draw_text("GET READY!!!", WIDTH / 2 - (7 * 12 / 2), HEIGHT / 2.5, 0xffffff);
+    if (display_flag) { // flash the ship
+        ship_render(&game->player);
+    }
+
+    List_Iterator it = list_iterator(game->active_asteroids);
+    asteroid *a;
+    while ((a = list_next(&it))) {
+        asteroid_render(a);
+    }
+
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullet b = game->bullet_list[i];
+        if (b.active_flag) {
+            draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
+        }
+    }
+
+    for (int i = 0; i < MAX_EXPLOSIONS; i++) {
+        explosion *e = &game->explosion_list[i];
+        if (e->active_flag) {
+            explosion_render(e);
+        }
     }
 }
 
