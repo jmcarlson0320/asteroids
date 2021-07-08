@@ -125,6 +125,20 @@ typedef struct {
     int active_flag;
 } explosion;
 
+typedef struct {
+    vec2 pos;
+    vec2 vel;
+    float angle;
+    float angular_vel;
+} ship_explosion_piece;
+
+typedef struct {
+    ship_explosion_piece pieces[NUM_EXPLOSION_PARTICLES];
+    vec2 pos;
+    float lifetime;
+    int active_flag;
+} ship_explosion;
+
 typedef struct gamestate gamestate;
 typedef struct asteroids asteroids;
 
@@ -228,6 +242,14 @@ void explosion_init(explosion *e);
 void explosion_start(explosion *e, int x, int y);
 void explosion_update(explosion *e, float dt);
 void explosion_render(explosion *e);
+
+/******************************************************************************
+ * ship_explosion.c
+ * ***************************************************************************/
+void ship_explosion_init(ship_explosion *e);
+void ship_explosion_start(ship_explosion *e, int x, int y);
+void ship_explosion_update(ship_explosion *e, float dt);
+void ship_explosion_render(ship_explosion *e);
 
 /******************************************************************************
  * util.c
