@@ -1,4 +1,5 @@
 #include "defs.h"
+#include <stdio.h>
 
 #define PAUSE_LENGTH 1.5f
 
@@ -79,6 +80,17 @@ static void reset_render(asteroids *game)
         if (e->active_flag) {
             explosion_render(e);
         }
+    }
+
+    char score_string[MAX_SCORE_STRING_LENGTH];
+    snprintf(score_string, MAX_SCORE_STRING_LENGTH, "%d", game->score);
+    draw_text(score_string, 8, 5, 0xffffff);
+
+    int x_offset = 8;
+    int y_offset = 30;
+    int spacing = 15;
+    for (int i = 0; i < game->lives; i++) {
+        draw_ship_wireframe(x_offset + i * spacing, y_offset);
     }
 }
 

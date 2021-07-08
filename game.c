@@ -195,10 +195,10 @@ void asteroids_init(asteroids *game)
         b->active_flag = INACTIVE;
         b->timer = 0;
     }
+
     game->num_bullets = 0;
-
     game->score = 0;
-
+    game->lives = 3;
     game->enemy_timer = 0;
 
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {

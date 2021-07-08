@@ -3,10 +3,22 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-int asteroid_scales[NUM_TYPES] = {
+const int asteroid_scales[NUM_TYPES] = {
     5,
     10,
     20
+};
+
+const int asteroid_scores[NUM_TYPES] = {
+    100,
+    50,
+    20
+};
+
+static const int asteroid_speeds[NUM_TYPES] = {
+    100,
+    50,
+    25
 };
 
 static char *filenames[3] = {
@@ -45,7 +57,8 @@ void load_models()
 
 void asteroid_init(asteroid *a, enum asteroid_type type)
 {
-    a->vel = new_vec2((float) rand() / (float) RAND_MAX * 100.0f - 50.0f, (float) rand() / (float) RAND_MAX * 100.0f - 50.0f);
+    a->vel = vec2_unit_vec(rand_float(0.0f, 6.28));
+    vec2_mult(&a->vel, &a->vel, asteroid_speeds[type]);
     a->angle = (float) rand() / (float) RAND_MAX * 2.0f * M_PI;
     a->ang_vel = (float) rand() / (float) RAND_MAX * 0.02f - 0.01f;
     a->pos = new_vec2((float) rand() / (float) RAND_MAX * WIDTH, (float) rand() / (float) RAND_MAX * HEIGHT);

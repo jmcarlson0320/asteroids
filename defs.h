@@ -10,10 +10,11 @@
 #define HEIGHT (1080 / SCALE_FACTOR)
 #define NUM_POINTS_ASTEROID 11
 #define MAX_BULLETS 4
-#define BULLET_SPEED 300
+#define BULLET_SPEED 350
 #define BULLET_LIFETIME 1
 #define NUM_EXPLOSION_PARTICLES 10
-#define MAX_EXPLOSIONS 32
+#define MAX_EXPLOSIONS 8
+#define MAX_SCORE_STRING_LENGTH 11
 #define ACTIVE 1
 #define INACTIVE 0
 #define MAX_ASTEROIDS 64
@@ -156,6 +157,7 @@ struct asteroids {
     float timer;
     int cur_color;
     int score;
+    int lives;
     float enemy_timer;
     ship player;
     List *active_asteroids;
@@ -206,11 +208,13 @@ void level_cleared_event(asteroids *game);
 void ship_init(ship *s, float x, float y);
 void ship_update(ship *s, float dt);
 void ship_render(ship *s);
+void draw_ship_wireframe(int x, int y);
 
 /******************************************************************************
  * asteroid.c
  * ***************************************************************************/
-extern int asteroid_scales[NUM_TYPES];
+extern const int asteroid_scales[NUM_TYPES];
+extern const int asteroid_scores[NUM_TYPES];
 
 void load_models();
 void asteroid_init(asteroid *a, enum asteroid_type type);

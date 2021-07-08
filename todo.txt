@@ -14,15 +14,17 @@ assets
         highscore
 game logic
     collision detections
+        size and pos of bounding circle
+        ship explosion
 game states
     start screen
+        bitmap logo
     play
         player-asteroid collisions
         show lives
         show score
         calculate score
         explosions
-        reset ship on death
     game over
     score
 memory management

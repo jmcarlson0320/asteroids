@@ -5,14 +5,6 @@
 
 static char *ship_model_filename = "models/ship.model";
 
-/*
-static vec2 ship_model[3] = {
-    {{ 0.5f,  0.0f}},
-    {{-0.5f,  0.25f}},
-    {{-0.5f, -0.25f}}
-};
-*/
-
 static vec2 *ship_model;
 static int num_points_ship_model;
 
@@ -92,6 +84,15 @@ void ship_update(ship *s, float dt)
     vec2_add(&s->pos, &s->pos, &ds);
 
     s->pos = wrap_coor(s->pos, WIDTH, HEIGHT);
+}
+
+void draw_ship_wireframe(int x, int y)
+{
+    transform t = new_transform();
+    transform_scale(&t, 10);
+    transform_rotate(&t, - M_PI / 2);
+    transform_translate(&t, x, y);
+    draw_wireframe(ship_model, num_points_ship_model, &t);
 }
 
 void ship_render(ship *s)
