@@ -42,45 +42,64 @@ void emitter_destroy(Emitter *e)
 void emitter_reset_particles(Emitter *e)
 {
     for (int i = 0; i < e->num_particles; i++) {
-        e->particles[i].active = 0;
-        e->particles[i].pos = e->pos;
-        float speed = (float) (rand() % 50);
-        float angle = (float) (rand() % 360) * M_PI / 180.0f;
-        e->particles[i].vel = new_vec2(speed * cos(angle), speed * sin(angle));
-        e->particles[i].color = 0xffffff;
-        e->particles[i].lifetime = ((float) rand() / (float) RAND_MAX) * e->max_lifetime;
-    }
-    e->num_active_particles = 0;
-}
-
-void emitter_start_emitting(Emitter *e)
-{
-    e->emit_flag = 0;
-}
-
-void emitter_stop_emitting(Emitter *e)
-{
-    e->emit_flag = 1;
-}
-
-void emitter_update(Emitter *e, float dt)
-{
-    for (int i = 0; i < e->num_particles; i++) {
-        e->particles[i].lifetime += dt;
-        if (e->particles[i].lifetime > e->max_lifetime) {
-            e->particles[i].active = 1;
+        if (!e->particles[i].active) {
+            e->particles[i].starting = 1;
             e->particles[i].pos = e->pos;
             float speed = (float) (rand() % 50);
             float angle = (float) (rand() % 360) * M_PI / 180.0f;
             e->particles[i].vel = new_vec2(speed * cos(angle), speed * sin(angle));
             e->particles[i].color = 0xffffff;
             e->particles[i].lifetime = ((float) rand() / (float) RAND_MAX) * e->max_lifetime;
-        } else {
-            vec2 delta_pos;
-            vec2_mult(&delta_pos, &e->particles[i].vel, dt);
-            vec2_add(&e->particles[i].pos, &e->particles[i].pos, &delta_pos);
-            float col_amt = norm(e->max_lifetime - e->particles[i].lifetime, 0, e->max_lifetime);
-            e->particles[i].color = interpolate_color(col_amt, 0x000000, 0xFFFFFF);
+        }
+    }
+    e->num_active_particles = 0;
+}
+
+void emitter_start_emitting(Emitter *e)
+{
+    if (e->emit_flag) {
+        return;
+    }
+    emitter_reset_particles(e);
+    e->emit_flag = 1;
+}
+
+void emitter_stop_emitting(Emitter *e)
+{
+    e->emit_flag = 0;
+}
+
+void emitter_update(Emitter *e, float dt)
+{
+    for (int i = 0; i < e->num_particles; i++) {
+        if (e->particles[i].active) {
+            e->particles[i].lifetime += dt;
+            if (e->particles[i].lifetime > e->max_lifetime) { // particle fizzled out, reset it
+                if (e->emit_flag) {
+                    e->particles[i].pos = e->pos;
+                    float speed = (float) (rand() % 50);
+                    float angle = (float) (rand() % 360) * M_PI / 180.0f;
+                    e->particles[i].vel = new_vec2(speed * cos(angle), speed * sin(angle));
+                    e->particles[i].color = 0xffffff;
+                    e->particles[i].lifetime = ((float) rand() / (float) RAND_MAX) * e->max_lifetime;
+                } else {
+                    e->particles[i].active = 0;
+                    e->num_active_particles--;
+                }
+            } else { // particle hasn't fizzled out yet, update it
+                vec2 delta_pos;
+                vec2_mult(&delta_pos, &e->particles[i].vel, dt);
+                vec2_add(&e->particles[i].pos, &e->particles[i].pos, &delta_pos);
+                float col_amt = norm(e->max_lifetime - e->particles[i].lifetime, 0, e->max_lifetime);
+                e->particles[i].color = interpolate_color(col_amt, 0x000000, 0xFFFFFF);
+            }
+        } else if (e->particles[i].starting && e->emit_flag) { // emitter just started, turn on particles randomly
+            e->particles[i].lifetime += dt;
+            if (e->particles[i].lifetime > e->max_lifetime) {
+                e->particles[i].active = 1;
+                e->particles[i].starting = 0;
+                e->num_active_particles++;
+            }
         }
     }
 }

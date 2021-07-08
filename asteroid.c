@@ -3,19 +3,19 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-char *filenames[3] = {
-    "models/asteroid_01.model",
-    "models/asteroid_02.model",
-    "models/asteroid_03.model"
-};
-
 int asteroid_scales[NUM_TYPES] = {
     5,
     10,
     20
 };
 
-vec2 asteroid_models[NUM_MODELS][11];
+static char *filenames[3] = {
+    "models/asteroid_01.model",
+    "models/asteroid_02.model",
+    "models/asteroid_03.model"
+};
+
+static vec2 asteroid_models[NUM_MODELS][NUM_POINTS_ASTEROID];
 
 void load_models()
 {

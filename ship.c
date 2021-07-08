@@ -1,24 +1,53 @@
 #include "defs.h"
 #include <math.h>
+#include <stdio.h>
+#include <stdlib.h>
 
+static char *ship_model_filename = "models/ship.model";
+
+/*
 static vec2 ship_model[3] = {
     {{ 0.5f,  0.0f}},
     {{-0.5f,  0.25f}},
     {{-0.5f, -0.25f}}
 };
+*/
+
+static vec2 *ship_model;
+static int num_points_ship_model;
 
 static vec2 flame_model[3] = {
-    {{-0.8f,  0.0f}},
-    {{-0.5f,  0.1f}},
-    {{-0.5f, -0.1f}}
+    {{-0.5f,  0.0f}},
+    {{-0.1f,  0.1f}},
+    {{-0.1f, -0.1f}}
 };
+
+void load_ship_model()
+{
+    FILE *fp = fopen(ship_model_filename, "r");
+    if (!fp) {
+        printf("could not open ship model file %s\n", ship_model_filename);
+        exit(1);
+    }
+
+    num_points_ship_model = 0;
+    fscanf(fp, "%d\n", &num_points_ship_model);
+
+    ship_model = malloc(sizeof(vec2) * num_points_ship_model);
+
+    // for each point
+    for (int i = 0; i < num_points_ship_model; i++) {
+        //      read it into the models array
+        fscanf(fp, "%f %f\n", &ship_model[i].e[X_COOR], &ship_model[i].e[Y_COOR]);
+    }
+    fclose(fp);
+}
 
 void ship_init(ship *s, float x, float y)
 {
-    s->model = ship_model;
-    s->flame = flame_model;
+    load_ship_model();
     s->angle = 3.0f * M_PI / 2.0f;
-    s->scale = 15;
+    s->scale = 10;
     s->pos = new_vec2(x, y);
 
     s->vel = new_vec2(0, 0);
@@ -35,10 +64,10 @@ void ship_update(ship *s, float dt)
 {
     switch (s->ctl_rotate) {
         case ROTATE_LEFT:
-            s->angle -= 0.05;
+            s->angle -= 0.06;
             break;
         case ROTATE_RIGHT:
-            s->angle += 0.05;
+            s->angle += 0.06;
             break;
         default:
             break;
@@ -72,9 +101,9 @@ void ship_render(ship *s)
     transform_scale(&t, s->scale);
     transform_rotate(&t, s->angle);
     transform_translate(&t, s->pos.e[X_COOR], s->pos.e[Y_COOR]);
-    draw_wireframe(s->model, 3, &t);
+    draw_wireframe(ship_model, num_points_ship_model, &t);
 
     if (s->ctl_thrust && s->flame_toggle) {
-        draw_wireframe(s->flame, 3, &t);
+        draw_wireframe(flame_model, 3, &t);
     }
 }

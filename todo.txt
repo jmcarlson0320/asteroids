@@ -3,6 +3,7 @@ refactor
     each component in its own file
     globals -> static variables in component file
     "pass around a struct/context" or "static variables in source file"?
+    replace magic numbers with constants
 assets
     enemy ship
     particles
@@ -16,6 +17,12 @@ game logic
 game states
     start screen
     play
+        player-asteroid collisions
+        show lives
+        show score
+        calculate score
+        explosions
+        reset ship on death
     game over
     score
 memory management

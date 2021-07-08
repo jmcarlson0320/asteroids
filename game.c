@@ -194,8 +194,6 @@ void asteroids_init(asteroids *game)
         b->vel = new_vec2(0, 0);
         b->active_flag = INACTIVE;
         b->timer = 0;
-        b->particles = emitter_create(200, b->pos.e[X_COOR], b->pos.e[Y_COOR]);
-        emitter_reset_particles(&b->particles);
     }
     game->num_bullets = 0;
 

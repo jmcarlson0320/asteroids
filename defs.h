@@ -10,6 +10,7 @@
 #define HEIGHT (1080 / SCALE_FACTOR)
 #define NUM_POINTS_ASTEROID 11
 #define MAX_BULLETS 4
+#define BULLET_SPEED 300
 #define BULLET_LIFETIME 1
 #define ACTIVE 1
 #define INACTIVE 0
@@ -107,7 +108,6 @@ typedef struct {
     vec2 vel;
     int active_flag;
     float timer;
-    Emitter particles;
 } bullet;
 
 typedef struct gamestate gamestate;

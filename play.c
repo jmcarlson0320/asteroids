@@ -46,9 +46,7 @@ static void play_update(asteroids *game, float dt)
                 b->timer = 0;
                 b->pos = s->pos;
                 b->vel = vec2_unit_vec(s->angle);
-                emitter_reset_particles(&b->particles);
-                b->particles.pos = b->pos;
-                vec2_mult(&b->vel, &b->vel, 500);
+                vec2_mult(&b->vel, &b->vel, BULLET_SPEED);
                 vec2_add(&b->vel, &b->vel, &s->vel);
                 game->num_bullets++;
                 break;
@@ -83,8 +81,6 @@ static void play_update(asteroids *game, float dt)
                 vec2_mult(&ds, &b->vel, dt);
                 vec2_add(&b->pos, &b->pos, &ds);
                 b->timer += dt;
-                b->particles.pos = b->pos;
-                emitter_update(&b->particles, dt);
             }
         }
     }
@@ -106,8 +102,7 @@ static void play_render(asteroids *game)
     for (int i = 0; i < MAX_BULLETS; i++) {
         bullet b = game->bullet_list[i];
         if (b.active_flag) {
-            draw_point(b.pos.e[X_COOR], b.pos.e[Y_COOR], 0xffffff);
-            emitter_render(&b.particles);
+            draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
         }
     }
 }

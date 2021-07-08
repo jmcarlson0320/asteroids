@@ -5,7 +5,11 @@ static Emitter particles;
 static void test_update(asteroids *game, float dt)
 {
     if (game->input[FIRE]) {
-        particles.emit_flag = !particles.emit_flag;
+        emitter_start_emitting(&particles);
+    }
+
+    if (game->input[THRUST]) {
+        emitter_stop_emitting(&particles);
     }
 
     emitter_update(&particles, dt);
