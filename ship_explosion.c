@@ -50,8 +50,6 @@ void ship_explosion_render(ship_explosion *e)
 
     for (int i = 0; i < NUM_EXPLOSION_PARTICLES; i++) {
         ship_explosion_piece *p = &e->pieces[i];
-        float offset_x = p->pos.e[X_COOR];
-        float offset_y = p->pos.e[Y_COOR];
         vec2 p1 = vec2_unit_vec(p->angle);
         vec2 p2 = vec2_unit_vec(p->angle + M_PI);
         vec2_mult(&p1, &p1, 3);

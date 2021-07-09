@@ -5,7 +5,7 @@
 #include "particle.h"
 #include "list.h"
 
-#define SCALE_FACTOR 3
+#define SCALE_FACTOR 4
 #define WIDTH (1920 / SCALE_FACTOR)
 #define HEIGHT (1080 / SCALE_FACTOR)
 #define NUM_POINTS_ASTEROID 11
@@ -179,6 +179,7 @@ struct asteroids {
     bullet bullet_list[MAX_BULLETS];
     int num_bullets;
     explosion explosion_list[MAX_EXPLOSIONS];
+    ship_explosion ship_explosion;
     Bitmap title;
     Bitmap score_board;
 };

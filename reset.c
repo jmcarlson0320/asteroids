@@ -1,8 +1,15 @@
 #include "defs.h"
 #include <stdio.h>
 
-#define PAUSE_LENGTH 1.5f
+#define EXPLODE_TIME 1.5f
+#define RESET_TIME 3.0f
 
+enum phase {
+    EXPLODE,
+    FLASH_SHIP
+};
+
+static int phase = EXPLODE;
 static float timer_sec = 0;
 static float timer_display = 0;
 static int display_flag = ACTIVE;
@@ -16,7 +23,10 @@ static void reset_update(asteroids *game, float dt)
 {
     timer_sec += dt;
     timer_display += dt;
-    if (timer_sec >= PAUSE_LENGTH) {
+    if (timer_sec >= EXPLODE_TIME) {
+        phase = FLASH_SHIP;
+    }
+    if (timer_sec >= RESET_TIME) {
         timer(game);
     }
 
@@ -53,13 +63,19 @@ static void reset_update(asteroids *game, float dt)
         }
     }
 
+    ship_explosion_update(&game->ship_explosion, dt);
+
 }
 
 static void reset_render(asteroids *game)
 {
     clear_screen();
-    if (display_flag) { // flash the ship
-        ship_render(&game->player);
+    if (phase == EXPLODE) {
+        ship_explosion_render(&game->ship_explosion);
+    } else if (phase == FLASH_SHIP) {
+        if (display_flag) { // flash the ship
+            ship_render(&game->player);
+        }
     }
 
     List_Iterator it = list_iterator(game->active_asteroids);
@@ -103,5 +119,7 @@ void transition_to_reset(asteroids *game)
 
     timer_sec = 0.0f;
     timer_display = 0.0f;
-    display_flag = ACTIVE;
+    display_flag = INACTIVE;
+    phase = EXPLODE;
+    ship_explosion_start(&game->ship_explosion, game->player.pos.e[X_COOR], game->player.pos.e[Y_COOR]);
 }

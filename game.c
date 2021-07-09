@@ -14,12 +14,12 @@ const int COLORS[NUM_COLORS] = {
 };
 
 const int KEY_MAP[NUM_INPUTS] = {
-    [FIRE] = KEY_SPACE,
-    [LEFT] = KEY_A,
-    [RIGHT] = KEY_D,
-    [THRUST] = KEY_W,
+    [FIRE] = KEY_M,
+    [LEFT] = KEY_Z,
+    [RIGHT] = KEY_C,
+    [THRUST] = KEY_N,
     [START] = KEY_RETURN,
-    [TELEPORT] = KEY_T,
+    [TELEPORT] = KEY_SPACE,
     [QUIT] = KEY_Q
 };
 
