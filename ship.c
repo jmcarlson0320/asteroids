@@ -35,6 +35,11 @@ void load_ship_model()
     fclose(fp);
 }
 
+void free_ship_model()
+{
+    free(ship_model);
+}
+
 void ship_init(ship *s, float x, float y)
 {
     load_ship_model();

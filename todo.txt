@@ -2,36 +2,26 @@ refactor
     consistent first-class ADT
     each component in its own file
     globals -> static variables in component file
-    "pass around a struct/context" or "static variables in source file"?
     replace magic numbers with constants
 assets
     enemy ship
-    particles
-        explosion
-        bullets
     bitmap (png)
         title
         highscore
 game logic
     collision detections
-        size and pos of bounding circle
-        ship explosion
+        tweak size and pos of bounding circle
 game states
+    play
+        enemy ship
+        clear stage
+        game over
     start screen
         bitmap logo
-    play
-        player-asteroid collisions
-        show lives
-        show score
-        calculate score
-        explosions
     game over
     score
-memory management
-    free assets
-split into files
 software bloom effect
-    research :
+    research:
     blur?
     write blurred image to another frame buffer?
     down sample to very low resolution before blurring?

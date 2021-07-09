@@ -192,6 +192,7 @@ extern const int COLORS[NUM_COLORS];
 void get_user_input(asteroids *game, App *app);
 void handle_user_input(asteroids *game);
 void asteroids_init(asteroids *game);
+void asteroids_shutdown(asteroids *game);
 
 void default_state(gamestate *gamestate);
 
@@ -220,6 +221,8 @@ void level_cleared_event(asteroids *game);
 /******************************************************************************
  * ship.c
  * ***************************************************************************/
+void load_ship_model();
+void free_ship_model();
 void ship_init(ship *s, float x, float y);
 void ship_update(ship *s, float dt);
 void ship_render(ship *s);

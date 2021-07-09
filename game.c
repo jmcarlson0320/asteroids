@@ -254,3 +254,22 @@ explosion *find_inactive_explosion(explosion *expl_array, int size)
     }
     return e;
 }
+
+void asteroids_shutdown(asteroids *game)
+{
+    List_Iterator it = list_iterator(game->active_asteroids);
+    while (list_has_next(&it)) {
+        free(list_next(&it));
+    }
+
+    list_delete(game->active_asteroids);
+
+    it = list_iterator(game->inactive_asteroids);
+    while (list_has_next(&it)) {
+        free(list_next(&it));
+    }
+
+    list_delete(game->inactive_asteroids);
+
+    free_ship_model();
+}

@@ -27,5 +27,8 @@ int main(int argc, char *argv[])
     }
     app_quit(&app);
 
+    asteroids_shutdown(game);
+    free(game);
+
     return 0;
 }
