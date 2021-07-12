@@ -148,7 +148,6 @@ static void play_update(asteroids *game, float dt)
 
 static void play_render(asteroids *game)
 {
-    clear_screen();
     ship_render(&game->player);
 
     List_Iterator it = list_iterator(game->active_asteroids);

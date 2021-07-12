@@ -15,7 +15,7 @@ void explosion_start(explosion *e, int x, int y)
     for (int i = 0; i < NUM_EXPLOSION_PARTICLES; i++) {
         explosion_piece *p = &e->pieces[i];
         p->pos = e->pos;
-        p->vel = vec2_unit_vec((float) rand() / (float) RAND_MAX * 2.0f * M_PI);
+        p->vel = vec2_unit_vec(rand_float(0.0f, 6.28f));
         vec2_mult(&p->vel, &p->vel, rand_float(5.0f, 50.0f));
     }
 }
