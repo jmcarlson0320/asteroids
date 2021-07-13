@@ -27,7 +27,6 @@ static void start_update(asteroids *game, float dt)
 
 static void start_render(asteroids *game)
 {
-    clear_screen();
     if (display_flag) {
         draw_text("GET READY!!!", WIDTH / 2 - (7 * 12 / 2), HEIGHT / 2.5, 0xffffff);
     }

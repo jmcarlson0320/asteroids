@@ -69,7 +69,6 @@ static void reset_update(asteroids *game, float dt)
 
 static void reset_render(asteroids *game)
 {
-    clear_screen();
     if (phase == EXPLODE) {
         ship_explosion_render(&game->ship_explosion);
     } else if (phase == FLASH_SHIP) {
