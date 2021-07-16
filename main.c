@@ -117,7 +117,7 @@ int main(int argc, char *argv[])
 
     int BLOOM = 1;
     int bloom_spread = 5;
-    float bloom_intensity = 1;
+    float bloom_intensity = 2;
 
     app_start(&app);
     while (app.running) {
