@@ -21,9 +21,5 @@ game states
     game over
     score
 software bloom effect
-    research:
-    blur?
-    write blurred image to another frame buffer?
-    down sample to very low resolution before blurring?
-    blend?
-    implement alpha blending in framework?
+    implement motion blur version
+    add to tiny-fw

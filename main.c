@@ -115,6 +115,7 @@ int main(int argc, char *argv[])
     int *pixels = malloc(sizeof(int) * WIDTH * HEIGHT);
     Bitmap blurred = bitmap_create(WIDTH, HEIGHT, pixels);
 
+    int BLOOM = 1;
     int bloom_spread = 5;
     float bloom_intensity = 1;
 
@@ -139,14 +140,19 @@ int main(int argc, char *argv[])
         if (app.keyboard.pressed[KEY_RIGHT]) {
             bloom_intensity++;
         }
+        if (app.keyboard.pressed[KEY_B]) {
+            BLOOM = !BLOOM;
+        }
 
         asteroids_update(game, app.time.dt_sec);
 
         clear_screen();
         asteroids_render(game);
-        blur_fast(app.graphics.pixels_rgb, pixels, WIDTH, HEIGHT, bloom_spread, bloom_intensity);
-        draw_bitmap(&blurred, 0, 0, WIDTH - 1, HEIGHT - 1, 0, 0);
-        asteroids_render(game);
+        if (BLOOM) {
+            blur_fast(app.graphics.pixels_rgb, pixels, WIDTH, HEIGHT, bloom_spread, bloom_intensity);
+            draw_bitmap(&blurred, 0, 0, WIDTH - 1, HEIGHT - 1, 0, 0);
+            asteroids_render(game);
+        }
 
         app_draw_graphics(&app);
     }

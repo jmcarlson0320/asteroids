@@ -16,7 +16,11 @@ static int display_flag = ACTIVE;
 
 static void timer(asteroids *game)
 {
-    transition_to_play(game);
+    if (game->lives >= 0) {
+        transition_to_play(game);
+    } else {
+        transition_to_gameover(game);
+    }
 }
 
 static void reset_update(asteroids *game, float dt)
@@ -64,7 +68,6 @@ static void reset_update(asteroids *game, float dt)
     }
 
     ship_explosion_update(&game->ship_explosion, dt);
-
 }
 
 static void reset_render(asteroids *game)
