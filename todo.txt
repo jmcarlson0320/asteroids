@@ -15,11 +15,18 @@ game states
     play
         enemy ship
         clear stage
+            reset next stage
         game over
+            transition after explosion
     start screen
         bitmap logo
     game over
     score
 software bloom effect
+    refactor rendering
+    colored asteroids/wireframes
+    background stars
     implement motion blur version
     add to tiny-fw
+tiny-fw
+    actually calculate timing/delay
