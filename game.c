@@ -252,6 +252,24 @@ void update_asteroid_list(List *asteroids, float dt)
     }
 }
 
+void update_bullets(bullet_list *bullet_list, float dt)
+{
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullet *b = &bullet_list->bullets[i];
+        if (b->active_flag) {
+            if (b->timer > BULLET_LIFETIME) {
+                b->active_flag = INACTIVE;
+                bullet_list->num_bullets--;
+            } else {
+                vec2 ds;
+                vec2_mult(&ds, &b->vel, dt);
+                vec2_add(&b->pos, &b->pos, &ds);
+                b->timer += dt;
+            }
+        }
+    }
+}
+
 explosion *find_inactive_explosion(explosion *expl_array, int size)
 {
     explosion *e = NULL;
@@ -262,6 +280,16 @@ explosion *find_inactive_explosion(explosion *expl_array, int size)
         }
     }
     return e;
+}
+
+void update_explosions(explosion *expl_array, float dt)
+{
+    for (int i = 0; i < MAX_EXPLOSIONS; i++) {
+        explosion *e = &expl_array[i];
+        if (e->active_flag) {
+            explosion_update(e, dt);
+        }
+    }
 }
 
 void asteroids_shutdown(asteroids *game)

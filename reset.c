@@ -44,33 +44,9 @@ static void reset_update(asteroids *game, float dt)
         display_flag = !display_flag;
     }
 
-    // update asteroids
     update_asteroid_list(game->active_asteroids, dt);
-
-    // update bullets
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet *b = &game->bullet_list.bullets[i];
-        if (b->active_flag) {
-            if (b->timer > BULLET_LIFETIME) {
-                b->active_flag = INACTIVE;
-                game->bullet_list.num_bullets--;
-            } else {
-                vec2 ds;
-                vec2_mult(&ds, &b->vel, dt);
-                vec2_add(&b->pos, &b->pos, &ds);
-                b->timer += dt;
-            }
-        }
-    }
-
-    // udate explosions
-    for (int i = 0; i < MAX_EXPLOSIONS; i++) {
-        explosion *e = &game->explosion_list[i];
-        if (e->active_flag) {
-            explosion_update(e, dt);
-        }
-    }
-
+    update_bullets(&game->bullet_list, dt);
+    update_explosions(game->explosion_list, dt);
     ship_explosion_update(&game->ship_explosion, dt);
 }
 

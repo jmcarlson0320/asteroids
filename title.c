@@ -32,11 +32,7 @@ static void title_update(asteroids *game, float dt)
         game->timer = 0;
     }
 
-    List_Iterator it = list_iterator(game->active_asteroids);
-    asteroid *a;
-    while ((a = list_next(&it))) {
-        asteroid_update(a, dt);
-    }
+    update_asteroid_list(game->active_asteroids, dt);
 }
 
 static void title_render(asteroids *game)

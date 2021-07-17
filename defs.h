@@ -203,7 +203,9 @@ void default_state(gamestate *gamestate);
 void clear_asteroids(asteroids *game);
 int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
 void update_asteroid_list(List *asteroids, float dt);
+void update_bullets(bullet_list *bullet_list, float dt);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
+void update_explosions(explosion *expl_array, float dt);
 
 // state transitions
 void transition_to_title(asteroids *game);
