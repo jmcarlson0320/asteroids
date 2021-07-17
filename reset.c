@@ -2,7 +2,7 @@
 #include <stdio.h>
 
 #define EXPLODE_TIME 1.5f
-#define RESET_TIME 3.0f
+#define RESET_TIME 3.2f
 
 enum phase {
     EXPLODE,
@@ -16,19 +16,24 @@ static int display_flag = ACTIVE;
 
 static void timer(asteroids *game)
 {
-    if (game->lives >= 0) {
-        transition_to_play(game);
-    } else {
+    if (game->lives < 0) {
         transition_to_gameover(game);
+    } else {
+        transition_to_play(game);
     }
 }
 
 static void reset_update(asteroids *game, float dt)
 {
+    // timer ticks
     timer_sec += dt;
     timer_display += dt;
     if (timer_sec >= EXPLODE_TIME) {
+        if (game->lives < 0) {
+            transition_to_gameover(game);
+        }
         phase = FLASH_SHIP;
+
     }
     if (timer_sec >= RESET_TIME) {
         timer(game);
@@ -39,18 +44,16 @@ static void reset_update(asteroids *game, float dt)
         display_flag = !display_flag;
     }
 
-    List_Iterator it = list_iterator(game->active_asteroids);
-    asteroid *a;
-    while ((a = list_next(&it))) {
-        asteroid_update(a, dt);
-    }
+    // update asteroids
+    update_asteroid_list(game->active_asteroids, dt);
 
+    // update bullets
     for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet *b = &game->bullet_list[i];
+        bullet *b = &game->bullet_list.bullets[i];
         if (b->active_flag) {
             if (b->timer > BULLET_LIFETIME) {
                 b->active_flag = INACTIVE;
-                game->num_bullets--;
+                game->bullet_list.num_bullets--;
             } else {
                 vec2 ds;
                 vec2_mult(&ds, &b->vel, dt);
@@ -60,6 +63,7 @@ static void reset_update(asteroids *game, float dt)
         }
     }
 
+    // udate explosions
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         explosion *e = &game->explosion_list[i];
         if (e->active_flag) {
@@ -80,19 +84,22 @@ static void reset_render(asteroids *game)
         }
     }
 
+    // render asteroids
     List_Iterator it = list_iterator(game->active_asteroids);
     asteroid *a;
     while ((a = list_next(&it))) {
         asteroid_render(a);
     }
 
+    // render bullets
     for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet b = game->bullet_list[i];
+        bullet b = game->bullet_list.bullets[i];
         if (b.active_flag) {
             draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
         }
     }
 
+    // render explosions
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         explosion *e = &game->explosion_list[i];
         if (e->active_flag) {
@@ -100,10 +107,12 @@ static void reset_render(asteroids *game)
         }
     }
 
+    // render score
     char score_string[MAX_SCORE_STRING_LENGTH];
     snprintf(score_string, MAX_SCORE_STRING_LENGTH, "%d", game->score);
     draw_text(score_string, 8, 5, 0xffffff);
 
+    // render lives
     int x_offset = 8;
     int y_offset = 30;
     int spacing = 15;

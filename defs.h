@@ -114,6 +114,11 @@ typedef struct {
 } bullet;
 
 typedef struct {
+    bullet bullets[MAX_BULLETS];
+    int num_bullets;
+} bullet_list;
+
+typedef struct {
     vec2 pos;
     vec2 vel;
 } explosion_piece;
@@ -176,8 +181,7 @@ struct asteroids {
     ship player;
     List *active_asteroids;
     List *inactive_asteroids;
-    bullet bullet_list[MAX_BULLETS];
-    int num_bullets;
+    bullet_list bullet_list;
     explosion explosion_list[MAX_EXPLOSIONS];
     ship_explosion ship_explosion;
     Bitmap title;
@@ -198,6 +202,7 @@ void default_state(gamestate *gamestate);
 
 void clear_asteroids(asteroids *game);
 int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
+void update_asteroid_list(List *asteroids, float dt);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
 
 // state transitions

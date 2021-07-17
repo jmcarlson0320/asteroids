@@ -35,13 +35,13 @@ static void check_collisions(asteroids *game)
             return;
         }
         for (int i = 0; i < MAX_BULLETS; i++) {
-            bullet *b = &game->bullet_list[i];
+            bullet *b = &game->bullet_list.bullets[i];
             if (b->active_flag) {
                 vec2 *point = &b->pos;
                 if (point_in_circle(point, asteroid_origin, asteroid_radius)) {
                     b->active_flag = INACTIVE;
                     b->timer = 0;
-                    game->num_bullets--;
+                    game->bullet_list.num_bullets--;
                     list_append(to_remove, a);
                     float x = a->pos.e[X_COOR];
                     float y = a->pos.e[Y_COOR];
@@ -89,9 +89,9 @@ static void play_update(asteroids *game, float dt)
     }
 
     // bullets
-    if (game->input[FIRE] && game->num_bullets < MAX_BULLETS) {
+    if (game->input[FIRE] && game->bullet_list.num_bullets < MAX_BULLETS) {
         for (int i = 0; i < MAX_BULLETS; i++) {
-            bullet *b = &game->bullet_list[i];
+            bullet *b = &game->bullet_list.bullets[i];
             if (!b->active_flag) {
                 b->active_flag = ACTIVE;
                 b->timer = 0;
@@ -99,7 +99,7 @@ static void play_update(asteroids *game, float dt)
                 b->vel = vec2_unit_vec(s->angle);
                 vec2_mult(&b->vel, &b->vel, BULLET_SPEED);
                 vec2_add(&b->vel, &b->vel, &s->vel);
-                game->num_bullets++;
+                game->bullet_list.num_bullets++;
                 break;
             }
         }
@@ -122,11 +122,11 @@ static void play_update(asteroids *game, float dt)
     }
 
     for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet *b = &game->bullet_list[i];
+        bullet *b = &game->bullet_list.bullets[i];
         if (b->active_flag) {
             if (b->timer > BULLET_LIFETIME) {
                 b->active_flag = INACTIVE;
-                game->num_bullets--;
+                game->bullet_list.num_bullets--;
             } else {
                 vec2 ds;
                 vec2_mult(&ds, &b->vel, dt);
@@ -157,7 +157,7 @@ static void play_render(asteroids *game)
     }
 
     for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet b = game->bullet_list[i];
+        bullet b = game->bullet_list.bullets[i];
         if (b.active_flag) {
             draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
         }
