@@ -18,6 +18,7 @@
 #define ACTIVE 1
 #define INACTIVE 0
 #define MAX_ASTEROIDS 64
+#define NUM_HIGHSCORES 10
 
 enum colors {
     RED,
@@ -144,6 +145,11 @@ typedef struct {
     int active_flag;
 } ship_explosion;
 
+typedef struct {
+    int points;
+    char initials[4];
+} score;
+
 typedef struct gamestate gamestate;
 typedef struct asteroids asteroids;
 
@@ -184,8 +190,8 @@ struct asteroids {
     bullet_list bullet_list;
     explosion explosion_list[MAX_EXPLOSIONS];
     ship_explosion ship_explosion;
+    score score_board[NUM_HIGHSCORES];
     Bitmap title;
-    Bitmap score_board;
 };
 
 /******************************************************************************
@@ -207,6 +213,9 @@ void update_bullets(bullet_list *bullet_list, float dt);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
 void update_explosions(explosion *expl_array, float dt);
 
+void load_scores(asteroids *game, char *filename);
+void save_scores(asteroids *game, char *filename);
+
 // state transitions
 void transition_to_title(asteroids *game);
 void transition_to_start(asteroids *game);
@@ -214,6 +223,7 @@ void transition_to_reset(asteroids *game);
 void transition_to_play(asteroids *game);
 void transition_to_gameover(asteroids *game);
 void transition_to_test(asteroids *game);
+void transition_to_highscore(asteroids *game);
 
 // events
 void asteroids_update(asteroids *game, float dt);

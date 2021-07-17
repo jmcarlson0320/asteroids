@@ -146,6 +146,10 @@ static void debug_controls(asteroids *game, App *app)
     if (app->keyboard.pressed[KEY_1]) {
         transition_to_test(game);
     }
+
+    if (app->keyboard.pressed[KEY_H]) {
+        transition_to_highscore(game);
+    }
 }
 
 void get_user_input(asteroids *game, App *app)
@@ -290,6 +294,27 @@ void update_explosions(explosion *expl_array, float dt)
             explosion_update(e, dt);
         }
     }
+}
+
+void load_scores(asteroids *game, char *filename)
+{
+    FILE *fp = fopen(filename, "r");
+    if (!fp) {
+        printf("could not open highscore file %s\n", filename);
+        exit(1);
+    }
+
+    // read the scores and save them to the datastruct
+    for (int i = 0; i < 11; i++) {
+        fscanf(fp, "%d %3s\n", &game->score_board[i].points, game->score_board[i].initials);
+    }
+
+    fclose(fp);
+}
+
+void save_scores(asteroids *game, char *filename)
+{
+
 }
 
 void asteroids_shutdown(asteroids *game)
