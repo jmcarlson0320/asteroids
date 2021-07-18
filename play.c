@@ -21,43 +21,63 @@ static void cleared(asteroids *game)
 
 static void check_collisions(asteroids *game)
 {
+    // we shouldn't remove items from a list while iterating
+    // track the asteroids to remove in this list, then remove them all at once
     List *to_remove = list_new();
+
     List_Iterator it = list_iterator(game->active_asteroids);
     while (list_has_next(&it)) {
         asteroid *a = list_next(&it);
+
+        // bounding circles for ship and asteroid
         float asteroid_radius = asteroid_scales[a->type] * 0.9;
         vec2 *asteroid_origin = &a->pos;
         float ship_radius = game->player.scale * 0.7;
         vec2 *ship_origin = &game->player.pos;
+
+        // check asteroid-ship collision
         if (circle_overlap(asteroid_origin, asteroid_radius, ship_origin, ship_radius)) {
             game->lives--;
             transition_to_reset(game);
             return;
         }
+
+        // for each bullet
         for (int i = 0; i < MAX_BULLETS; i++) {
             bullet *b = &game->bullet_list.bullets[i];
             if (b->active_flag) {
                 vec2 *point = &b->pos;
+
+                // check asteroid bullet collision
                 if (point_in_circle(point, asteroid_origin, asteroid_radius)) {
+                    // reset the bullet
                     b->active_flag = INACTIVE;
                     b->timer = 0;
                     game->bullet_list.num_bullets--;
+
                     list_append(to_remove, a);
+
+                    // split the asteroid into smaller pieces
                     float x = a->pos.e[X_COOR];
                     float y = a->pos.e[Y_COOR];
                     if (a->type > SMALL) {
                         spawn_asteroid(game, x, y, a->type - 1);
                         spawn_asteroid(game, x, y, a->type - 1);
                     }
+
+                    // start an explosion animation
                     explosion *e = find_inactive_explosion(game->explosion_list, MAX_EXPLOSIONS);
                     if (e) {
                         explosion_start(e, x, y);
                     }
+
                     game->score += asteroid_scores[a->type];
                 }
             }
         }
     }
+
+    // now reset all the asteroids in to_remove
     it = list_iterator(to_remove);
     while (list_has_next(&it)) {
         asteroid *a = list_next(&it);
@@ -71,6 +91,7 @@ static void play_update(asteroids *game, float dt)
 {
     ship *s = &game->player;
 
+    // ship rotation
     if (game->input[LEFT] && game->input[RIGHT]) {
         s->ctl_rotate = ROTATE_STOP;
     } else if (game->input[LEFT]) {
@@ -105,14 +126,6 @@ static void play_update(asteroids *game, float dt)
         }
     }
 
-    // color change timer
-    game->timer += dt;
-    if (game->timer >= 0.1f) {
-        game->cur_color++;
-        game->cur_color %= NUM_COLORS;
-        game->timer = 0;
-    }
-
     ship_update(&game->player, dt);
     update_asteroid_list(game->active_asteroids, dt);
     update_bullets(&game->bullet_list, dt);
@@ -144,6 +157,7 @@ static void play_render(asteroids *game)
             explosion_render(e);
         }
     }
+
     char score_string[MAX_SCORE_STRING_LENGTH];
     snprintf(score_string, MAX_SCORE_STRING_LENGTH, "%d", game->score);
     draw_text(score_string, 8, 5, 0xffffff);

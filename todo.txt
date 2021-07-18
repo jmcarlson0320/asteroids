@@ -1,4 +1,6 @@
 refactor
+    we do not need events
+        states just call the transition functions from within states
     consistent first-class ADT
     each component in its own file
     globals -> static variables in component file
@@ -17,7 +19,10 @@ game states
         clear stage
             reset next stage
         game over
-            transition after explosion
+            enter score
+            	file to store scores
+            	user input
+            	display
     start screen
         bitmap logo
     game over

@@ -12,10 +12,9 @@ static void render_scoreboard(score scoreboard[], int num_scores)
     char *p = scores;
 
     for (int i = 0; i < NUM_HIGHSCORES; i++) {
-        int num_chars = snprintf(p, BUFFER_SIZE, "%d. %d %3s\n", i + 1, scoreboard[i].points, scoreboard[i].initials);
+        int num_chars = snprintf(p, BUFFER_SIZE - 1, "%d. %d %3s\n", i + 1, scoreboard[i].points, scoreboard[i].initials);
         p += num_chars;
     }
-    *p = '\0';
 
     draw_text(scores, WIDTH / 2 - (7 * 15 / 2), HEIGHT / 5, 0xffffff);
 }
