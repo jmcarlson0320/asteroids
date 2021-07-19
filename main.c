@@ -90,10 +90,9 @@ void blur_fast(int *image, int *result, int w, int h, int k, int c)
             float scale = (2 * k + 1) * (2 * k + 1) / c;
             vec3_div(&p1, &p1, scale);
 
-            int r, g, b;
-            r = p1.e[RED_COMP];
-            g = p1.e[GREEN_COMP];
-            b = p1.e[BLUE_COMP];
+            int r = p1.e[RED_COMP];
+            int g = p1.e[GREEN_COMP];
+            int b = p1.e[BLUE_COMP];
 
             if (r > 255) r = 255;
             if (g > 255) g = 255;

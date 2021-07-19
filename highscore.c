@@ -1,7 +1,7 @@
 #include "defs.h"
 #include <stdio.h>
 
-#define SCORES_FILNAME "highscores.data"
+#define SCORES_FILENAME "highscores.data"
 #define BUFFER_SIZE 256
 
 static float timer_sec = 0.0f;
@@ -42,6 +42,5 @@ void transition_to_highscore(asteroids *game)
     game->gamestate.update = highscore_update;
     game->gamestate.render = highscore_render;
 
-    load_scores(game, SCORES_FILNAME);
+    load_scores(game, SCORES_FILENAME);
 }
-

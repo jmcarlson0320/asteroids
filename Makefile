@@ -1,5 +1,5 @@
 CC = gcc
-CFLAGS = -g -Wall -I/home/jmc/include -DDEBUG
+CFLAGS = -g -Wall -I/home/jmc/include
 LIBS = -L/home/jmc/lib -ltinyfw -lm -lSDL2
 EXE = asteroids
 
