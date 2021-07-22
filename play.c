@@ -2,23 +2,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-static void destroyed(asteroids *game)
-{
-    game->player.ctl_thrust = INACTIVE;
-    // initialize the explosion
-    transition_to_reset(game);
-}
-
-static void gameover(asteroids *game)
-{
-    transition_to_gameover(game);
-}
-
-static void cleared(asteroids *game)
-{
-    transition_to_reset(game);
-}
-
 static void check_collisions(asteroids *game)
 {
     // we shouldn't remove items from a list while iterating
@@ -173,9 +156,6 @@ static void play_render(asteroids *game)
 void transition_to_play(asteroids *game)
 {
     default_state(&game->gamestate);
-    game->gamestate.destroyed = destroyed;
-    game->gamestate.gameover = gameover;
-    game->gamestate.cleared = cleared;
     game->gamestate.update = play_update;
     game->gamestate.render = play_render;
 

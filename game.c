@@ -42,12 +42,6 @@ void default_state(gamestate *gamestate)
 {
     gamestate->update = default_update;
     gamestate->render = default_render;
-    gamestate->gameover = default_state_transition;
-    gamestate->start = default_state_transition;
-    gamestate->timer = default_state_transition;
-    gamestate->destroyed = default_state_transition;
-    gamestate->initials_entered = default_state_transition;
-    gamestate->cleared = default_state_transition;
 }
 
 void asteroids_update(asteroids *game, float dt)
@@ -58,36 +52,6 @@ void asteroids_update(asteroids *game, float dt)
 void asteroids_render(asteroids *game)
 {
     game->gamestate.render(game);
-}
-
-void gameover_event(asteroids *game)
-{
-    game->gamestate.gameover(game);
-}
-
-void start_event(asteroids *game)
-{
-    game->gamestate.start(game);
-}
-
-void timer_event(asteroids *game)
-{
-    game->gamestate.timer(game);
-}
-
-void destroyed_event(asteroids *game)
-{
-    game->gamestate.destroyed(game);
-}
-
-void initials_entered_event(asteroids *game)
-{
-    game->gamestate.initials_entered(game);
-}
-
-void level_cleared_event(asteroids *game)
-{
-    game->gamestate.cleared(game);
 }
 
 static void debug_controls(asteroids *game, App *app)
@@ -117,30 +81,6 @@ static void debug_controls(asteroids *game, App *app)
 
     if (app->keyboard.pressed[KEY_R]) {
         transition_to_reset(game);
-    }
-
-    if (app->keyboard.pressed[KEY_Y]) {
-        gameover_event(game);
-    }
-
-    if (app->keyboard.pressed[KEY_S]) {
-        start_event(game);
-    }
-
-    if (app->keyboard.pressed[KEY_I]) {
-        timer_event(game);
-    }
-
-    if (app->keyboard.pressed[KEY_K]) {
-        destroyed_event(game);
-    }
-
-    if (app->keyboard.pressed[KEY_L]) {
-        initials_entered_event(game);
-    }
-
-    if (app->keyboard.pressed[KEY_C]) {
-        level_cleared_event(game);
     }
 
     if (app->keyboard.pressed[KEY_1]) {

@@ -35,7 +35,6 @@ static void start_render(asteroids *game)
 void transition_to_start(asteroids *game)
 {
     default_state(&game->gamestate);
-    game->gamestate.timer = timer;
     game->gamestate.update = start_update;
     game->gamestate.render= start_render;
 

@@ -100,7 +100,6 @@ static void reset_render(asteroids *game)
 void transition_to_reset(asteroids *game)
 {
     default_state(&game->gamestate);
-    game->gamestate.timer = timer;
     game->gamestate.update = reset_update;
     game->gamestate.render= reset_render;
 

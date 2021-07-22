@@ -52,7 +52,6 @@ static void title_render(asteroids *game)
 void transition_to_title(asteroids *game)
 {
     default_state(&game->gamestate);
-    game->gamestate.start = start;
     game->gamestate.update = title_update;
     game->gamestate.render = title_render;
 

@@ -153,14 +153,6 @@ typedef struct {
 typedef struct gamestate gamestate;
 typedef struct asteroids asteroids;
 
-//function pointers for events
-typedef void (*on_gameover)(asteroids *game);
-typedef void (*on_start)(asteroids *game);
-typedef void (*on_timer)(asteroids *game);
-typedef void (*on_destroyed)(asteroids *game);
-typedef void (*on_initials_entered)(asteroids *game);
-typedef void (*on_level_cleared)(asteroids *game);
-
 // each state implements versions of these
 typedef void (*on_update)(asteroids *game, float dt);
 typedef void (*on_render)(asteroids *game);
@@ -168,12 +160,6 @@ typedef void (*on_render)(asteroids *game);
 struct gamestate {
     on_update update;
     on_render render;
-    on_gameover gameover;
-    on_start start;
-    on_timer timer;
-    on_destroyed destroyed;
-    on_initials_entered initials_entered;
-    on_level_cleared cleared;
 };
 
 struct asteroids {
@@ -205,6 +191,8 @@ void asteroids_init(asteroids *game);
 void asteroids_shutdown(asteroids *game);
 
 void default_state(gamestate *gamestate);
+void asteroids_update(asteroids *game, float dt);
+void asteroids_render(asteroids *game);
 
 void clear_asteroids(asteroids *game);
 int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
@@ -224,16 +212,6 @@ void transition_to_play(asteroids *game);
 void transition_to_gameover(asteroids *game);
 void transition_to_test(asteroids *game);
 void transition_to_highscore(asteroids *game);
-
-// events
-void asteroids_update(asteroids *game, float dt);
-void asteroids_render(asteroids *game);
-void gameover_event(asteroids *game);
-void start_event(asteroids *game);
-void timer_event(asteroids *game);
-void destroyed_event(asteroids *game);
-void initials_entered_event(asteroids *game);
-void level_cleared_event(asteroids *game);
 
 /******************************************************************************
  * ship.c

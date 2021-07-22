@@ -104,6 +104,32 @@ void blur_fast(int *image, int *result, int w, int h, int k, int c)
     free(p);
 }
 
+void bloom_debug_controls(int pressed[], int *BLOOM, int *spread, float *intensity)
+{
+    if (pressed[KEY_UP]) {
+        (*spread)++;
+    }
+
+    if (pressed[KEY_DOWN]) {
+        (*spread)--;
+    }
+
+    if (pressed[KEY_LEFT]) {
+        (*intensity)--;
+        if ((*intensity) <= 0) {
+            (*intensity) = 1;
+        }
+    }
+
+    if (pressed[KEY_RIGHT]) {
+        (*intensity)++;
+    }
+
+    if (pressed[KEY_B]) {
+        (*BLOOM) = !(*BLOOM);
+    }
+}
+
 int main(int argc, char *argv[])
 {
     App app = app_create(WIDTH, HEIGHT);
@@ -124,25 +150,7 @@ int main(int argc, char *argv[])
 
         get_user_input(game, &app);
 
-        if (app.keyboard.pressed[KEY_UP]) {
-            bloom_spread++;
-        }
-        if (app.keyboard.pressed[KEY_DOWN]) {
-            bloom_spread--;
-        }
-        if (app.keyboard.pressed[KEY_LEFT]) {
-            bloom_intensity--;
-            if (bloom_intensity <= 0) {
-                bloom_intensity = 1;
-            }
-        }
-        if (app.keyboard.pressed[KEY_RIGHT]) {
-            bloom_intensity++;
-        }
-        if (app.keyboard.pressed[KEY_B]) {
-            BLOOM = !BLOOM;
-        }
-
+        bloom_debug_controls(app.keyboard.pressed, &BLOOM, &bloom_spread, &bloom_intensity);
         asteroids_update(game, app.time.dt_sec);
 
         clear_screen();

@@ -18,7 +18,6 @@ static void gameover_render(asteroids *game)
 void transition_to_gameover(asteroids *game)
 {
     default_state(&game->gamestate);
-    game->gamestate.initials_entered = initials_entered;
     game->gamestate.update = gameover_update;
     game->gamestate.render = gameover_render;
 }
