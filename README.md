@@ -23,7 +23,7 @@ make
 
 ## Usage
 
-Controls (can be changed in defs.h)
+Controls (can be changed in game.c)
 ```
 Z - rotate left
 C - rotate right
