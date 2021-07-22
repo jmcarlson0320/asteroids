@@ -132,7 +132,7 @@ void bloom_debug_controls(int pressed[], int *BLOOM, int *spread, float *intensi
 
 int main(int argc, char *argv[])
 {
-    App app = app_create(WIDTH, HEIGHT);
+    App app = app_create(WIDTH, HEIGHT, SCALE_FACTOR);
 
     asteroids *game = malloc(sizeof(asteroids));
     asteroids_init(game);
