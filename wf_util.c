@@ -206,7 +206,7 @@ int main(int argc, char *argv[])
     vec2 *selected_point = NULL;
     vec2 *nearest_point = NULL;
 
-    App app = app_create(WIDTH, HEIGHT);
+    App app = app_create(WIDTH, HEIGHT, SCALE_FACTOR);
     app_start(&app);
     while (app.running) {
         app_update(&app);
