@@ -12,7 +12,7 @@ void ship_explosion_start(ship_explosion *e, int x, int y)
     e->pos = new_vec2(x, y);
     e->lifetime = 1.5f;
     e->active_flag = ACTIVE;
-    for (int i = 0; i < NUM_EXPLOSION_PARTICLES; i++) {
+    for (int i = 0; i < NUM_SHIP_PIECES; i++) {
         ship_explosion_piece *p = &e->pieces[i];
         p->pos = e->pos;
         p->vel = vec2_unit_vec((float) rand() / (float) RAND_MAX * 2.0f * M_PI);
@@ -28,7 +28,7 @@ void ship_explosion_update(ship_explosion *e, float dt)
         return;
     }
 
-    for (int i = 0; i < NUM_EXPLOSION_PARTICLES; i++) {
+    for (int i = 0; i < NUM_SHIP_PIECES; i++) {
         ship_explosion_piece *p = &e->pieces[i];
         vec2 ds;
         vec2_mult(&ds, &p->vel, dt);
@@ -48,7 +48,7 @@ void ship_explosion_render(ship_explosion *e)
         return;
     }
 
-    for (int i = 0; i < NUM_EXPLOSION_PARTICLES; i++) {
+    for (int i = 0; i < NUM_SHIP_PIECES; i++) {
         ship_explosion_piece *p = &e->pieces[i];
         vec2 p1 = vec2_unit_vec(p->angle);
         vec2 p2 = vec2_unit_vec(p->angle + M_PI);
