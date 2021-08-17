@@ -5,9 +5,9 @@
 #include "particle.h"
 #include "list.h"
 
-#define SCALE_FACTOR 4
-#define WIDTH (1920 / SCALE_FACTOR)
-#define HEIGHT (1080 / SCALE_FACTOR)
+#define SCALE_FACTOR 3
+#define WIDTH 320
+#define HEIGHT 200
 #define NUM_POINTS_ASTEROID 11
 #define MAX_BULLETS 4
 #define BULLET_SPEED 350

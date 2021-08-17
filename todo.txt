@@ -5,6 +5,7 @@ refactor
     each component in its own file
     globals -> static variables in component file
     replace magic numbers with constants
+    take bloom code out of main
 assets
     enemy ship
     bitmap (png)

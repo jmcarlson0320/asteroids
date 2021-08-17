@@ -132,6 +132,7 @@ void *list_pop(List *list, int pos)
         cur = cur->next;
         index++;
     }
+    // call remove here instead...
     if (!cur->prev && !cur->next) { // single node
         list->head = NULL;
         list->tail = NULL;
