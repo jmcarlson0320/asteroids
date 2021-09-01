@@ -20,7 +20,9 @@ const int KEY_MAP[NUM_INPUTS] = {
     [THRUST] = KEY_N,
     [START] = KEY_RETURN,
     [TELEPORT] = KEY_SPACE,
-    [QUIT] = KEY_Q
+    [QUIT] = KEY_Q,
+    [NEXT_LETTER] = KEY_C,
+    [PREV_LETTER] = KEY_Z
 };
 
 static void default_state_transition(asteroids *game)
@@ -94,12 +96,15 @@ static void debug_controls(asteroids *game, App *app)
 
 void get_user_input(asteroids *game, App *app)
 {
-    game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
-
-    // take keyboard state from app and update game's controls
-    for (int i = 1; i < NUM_INPUTS; i++) {
+    // DEFAULT: repeat when held, use app->keyboard.down[]
+    for (int i = 0; i < NUM_INPUTS; i++) {
         game->input[i] = app->keyboard.down[KEY_MAP[i]];
     }
+
+    // OVERRIDE: inputs that shouldn't repeat when held, use app->keyboard.pressed[]
+    game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
+    game->input[PREV_LETTER] = app->keyboard.pressed[KEY_MAP[PREV_LETTER]];
+    game->input[NEXT_LETTER] = app->keyboard.pressed[KEY_MAP[NEXT_LETTER]];
 
     if (game->input[QUIT] == ACTIVE) {
         app->running = 0;

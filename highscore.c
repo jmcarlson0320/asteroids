@@ -30,7 +30,6 @@ static void highscore_update(asteroids *game, float dt)
 
 static void highscore_render(asteroids *game)
 {
-    clear_screen();
     draw_text("HIGHSCORES", WIDTH / 2 - (7 * 12 / 2), 40, 0xffffff);
     render_scoreboard(game->score_board, NUM_HIGHSCORES);
 }

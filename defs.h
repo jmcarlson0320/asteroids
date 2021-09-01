@@ -62,6 +62,8 @@ enum inputs {
     START,
     TELEPORT,
     QUIT,
+    NEXT_LETTER,
+    PREV_LETTER,
     NUM_INPUTS
 };
 
