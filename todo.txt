@@ -1,6 +1,4 @@
 refactor
-    we do not need events
-        states just call the transition functions from within states
     consistent first-class ADT
     each component in its own file
     globals -> static variables in component file
