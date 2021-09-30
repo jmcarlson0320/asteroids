@@ -51,9 +51,9 @@ static void title_render(asteroids *game)
 
 void transition_to_title(asteroids *game)
 {
-    default_state(&game->gamestate);
-    game->gamestate.update = title_update;
-    game->gamestate.render = title_render;
+    default_state(game);
+    game->update = title_update;
+    game->render = title_render;
 
     clear_asteroids(game);
     for (int i = 0; i < 10; i++) {

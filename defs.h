@@ -131,20 +131,15 @@ typedef struct {
     char initials[4];
 } score;
 
-typedef struct gamestate gamestate;
 typedef struct asteroids asteroids;
 
-// each state implements versions of these
+// each gamestate implements these
 typedef void (*on_update)(asteroids *game, float dt);
 typedef void (*on_render)(asteroids *game);
 
-struct gamestate {
+struct asteroids {
     on_update update;
     on_render render;
-};
-
-struct asteroids {
-    gamestate gamestate;
     int input[NUM_INPUTS];
     float timer;
     int cur_color;
@@ -171,7 +166,7 @@ void handle_user_input(asteroids *game);
 void asteroids_init(asteroids *game);
 void asteroids_shutdown(asteroids *game);
 
-void default_state(gamestate *gamestate);
+void default_state(asteroids *game);
 void asteroids_update(asteroids *game, float dt);
 void asteroids_render(asteroids *game);
 

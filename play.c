@@ -155,9 +155,9 @@ static void play_render(asteroids *game)
 
 void transition_to_play(asteroids *game)
 {
-    default_state(&game->gamestate);
-    game->gamestate.update = play_update;
-    game->gamestate.render = play_render;
+    default_state(game);
+    game->update = play_update;
+    game->render = play_render;
 
     game->player.vel = new_vec2(0, 0);
 }

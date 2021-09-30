@@ -36,9 +36,9 @@ static void highscore_render(asteroids *game)
 
 void transition_to_highscore(asteroids *game)
 {
-    default_state(&game->gamestate);
-    game->gamestate.update = highscore_update;
-    game->gamestate.render = highscore_render;
+    default_state(game);
+    game->update = highscore_update;
+    game->render = highscore_render;
 
     load_scores(game, SCORES_FILENAME);
 }

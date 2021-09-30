@@ -25,11 +25,6 @@ const int KEY_MAP[NUM_INPUTS] = {
     [PREV_LETTER] = KEY_Z
 };
 
-static void default_state_transition(asteroids *game)
-{
-    printf("state transition not defined!!!\n");
-}
-
 static void default_update(asteroids *game, float dt)
 {
     printf("update function not defined!!!\n");
@@ -40,20 +35,20 @@ static void default_render(asteroids *game)
     printf("render function not defined!!!\n");
 }
 
-void default_state(gamestate *gamestate)
+void default_state(asteroids *game)
 {
-    gamestate->update = default_update;
-    gamestate->render = default_render;
+    game->update = default_update;
+    game->render = default_render;
 }
 
 void asteroids_update(asteroids *game, float dt)
 {
-    game->gamestate.update(game, dt);
+    game->update(game, dt);
 }
 
 void asteroids_render(asteroids *game)
 {
-    game->gamestate.render(game);
+    game->render(game);
 }
 
 static void debug_controls(asteroids *game, App *app)

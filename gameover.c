@@ -49,9 +49,9 @@ static void gameover_render(asteroids *game)
 
 void transition_to_gameover(asteroids *game)
 {
-    default_state(&game->gamestate);
-    game->gamestate.update = gameover_update;
-    game->gamestate.render = gameover_render;
+    default_state(game);
+    game->update = gameover_update;
+    game->render = gameover_render;
     clear_initials();
     current_letter = 0;
     initials[current_letter] = 'A';
