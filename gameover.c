@@ -20,10 +20,16 @@ static void gameover_update(asteroids *game, float dt)
 {
     if (game->input[NEXT_LETTER]) {
         initials[current_letter]++;
+        if (initials[current_letter] > 'Z') {
+            initials[current_letter] = 'A';
+        }
     }
 
     if (game->input[PREV_LETTER]) {
         initials[current_letter]--;
+        if (initials[current_letter] < 'A') {
+            initials[current_letter] = 'Z';
+        }
     }
 
     if (game->input[FIRE]) {

@@ -32,28 +32,6 @@ enum colors {
     NUM_COLORS
 };
 
-enum game_states {
-    TITLE,
-    PLAY,
-    RESET,
-    GAME_OVER,
-    SHUTDOWN,
-    TEST,
-    NUM_STATES
-};
-
-enum game_events {
-    START_GAME,
-    DESTROYED,
-    TIMER,
-    LEVEL_CLEARED,
-    DEFEATED,
-    INITIALS_ENTERED,
-    EXIT,
-    NO_EVENT,
-    NUM_EVENTS
-};
-
 enum inputs {
     FIRE,
     LEFT,

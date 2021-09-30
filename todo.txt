@@ -19,14 +19,13 @@ game states
         enemy ship
         clear stage
             reset next stage
-        game over
-            enter score
-            	file to store scores
-            	user input
-            	display
+    game over
+        enter score
+            file to store scores
+            user input
+            display
     start screen
         bitmap logo
-    game over
     score
 software bloom effect
     refactor rendering
