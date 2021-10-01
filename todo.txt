@@ -26,10 +26,12 @@ game states
         bitmap logo
     score
 software bloom effect
-    refactor rendering
-    colored asteroids/wireframes
-    background stars
-    implement motion blur version
+    look at efficiency
+        downsample before bluring
+        implement motion blur version
+    colored asteroids
+    background blinking stars
     add to tiny-fw
 tiny-fw
+    specify color when drawing wireframes
     actually calculate timing/delay
