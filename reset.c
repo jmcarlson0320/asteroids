@@ -10,8 +10,8 @@ enum phase {
 };
 
 static int phase = EXPLODE;
-static float timer_sec = 0;
-static float timer_display = 0;
+static float reset_timer = 0;
+static float flash_timer = 0;
 static int display_flag = ACTIVE;
 
 static void timer(asteroids *game)
@@ -26,21 +26,21 @@ static void timer(asteroids *game)
 static void reset_update(asteroids *game, float dt)
 {
     // timer ticks
-    timer_sec += dt;
-    timer_display += dt;
-    if (timer_sec >= EXPLODE_TIME) {
+    reset_timer += dt;
+    flash_timer += dt;
+    if (reset_timer >= EXPLODE_TIME) {
         if (game->lives < 0) {
             transition_to_gameover(game);
         }
         phase = FLASH_SHIP;
 
     }
-    if (timer_sec >= RESET_TIME) {
+    if (reset_timer >= RESET_TIME) {
         timer(game);
     }
 
-    if (timer_display >= 0.2f) {
-        timer_display = 0.0f;
+    if (flash_timer >= 0.2f) {
+        flash_timer = 0.0f;
         display_flag = !display_flag;
     }
 
@@ -99,12 +99,11 @@ static void reset_render(asteroids *game)
 
 void transition_to_reset(asteroids *game)
 {
-    default_state(game);
     game->update = reset_update;
     game->render= reset_render;
 
-    timer_sec = 0.0f;
-    timer_display = 0.0f;
+    reset_timer = 0.0f;
+    flash_timer = 0.0f;
     display_flag = INACTIVE;
     phase = EXPLODE;
     ship_explosion_start(&game->ship_explosion, game->player.pos.e[X_COOR], game->player.pos.e[Y_COOR]);

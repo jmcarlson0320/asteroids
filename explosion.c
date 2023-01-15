@@ -22,7 +22,7 @@ void explosion_start(explosion *e, int x, int y)
 
 void explosion_update(explosion *e, float dt)
 {
-    if (!e->active_flag) {
+    if (e->active_flag == INACTIVE) {
         return;
     }
 

@@ -91,12 +91,14 @@ static void debug_controls(asteroids *game, App *app)
 
 void get_user_input(asteroids *game, App *app)
 {
-    // DEFAULT: repeat when held, use app->keyboard.down[]
+    // key stays on while held, uses app->keyboard.down[]
+    // ship controls use this style of input
     for (int i = 0; i < NUM_INPUTS; i++) {
         game->input[i] = app->keyboard.down[KEY_MAP[i]];
     }
 
-    // OVERRIDE: inputs that shouldn't repeat when held, use app->keyboard.pressed[]
+    // key triggers once per press, uses app->keyboard.pressed[]
+    // fire weapon uses this style of input
     game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
     game->input[PREV_LETTER] = app->keyboard.pressed[KEY_MAP[PREV_LETTER]];
     game->input[NEXT_LETTER] = app->keyboard.pressed[KEY_MAP[NEXT_LETTER]];

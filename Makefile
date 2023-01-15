@@ -1,6 +1,6 @@
 CC = gcc
-CFLAGS = -g -Wall -I/home/jmc/include
-LIBS = -L/home/jmc/lib -ltinyfw -lm -lSDL2
+CFLAGS = -g -Wall -I/Users/jmc/devel/include -I/opt/homebrew/include
+LIBS = -L/Users/jmc/devel/lib -L/opt/homebrew/lib -ltinyfw -lm -lSDL2
 EXE = asteroids
 
 $(EXE): main.o list.o particle.o ship.o explosion.o ship_explosion.o utils.o asteroid.o game.o title.o play.o reset.o gameover.o highscore.o test.o start.o

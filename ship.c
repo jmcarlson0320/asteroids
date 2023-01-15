@@ -9,7 +9,7 @@ static vec2 *ship_model;
 static int num_points_ship_model;
 
 static vec2 flame_model[3] = {
-    {{-0.5f,  0.0f}},
+    {{-0.8f,  0.0f}},
     {{-0.1f,  0.1f}},
     {{-0.1f, -0.1f}}
 };
@@ -61,10 +61,10 @@ void ship_update(ship *s, float dt)
 {
     switch (s->ctl_rotate) {
         case ROTATE_LEFT:
-            s->angle -= 0.06;
+            s->angle -= 0.08;
             break;
         case ROTATE_RIGHT:
-            s->angle += 0.06;
+            s->angle += 0.08;
             break;
         default:
             break;
@@ -73,7 +73,7 @@ void ship_update(ship *s, float dt)
     if (s->ctl_thrust) {
         vec2 dv = new_vec2(cos(s->angle), sin(s->angle));
         vec2_normalize(&dv, &dv);
-        vec2_mult(&dv, &dv, 3);
+        vec2_mult(&dv, &dv, 4);
         vec2_add(&s->vel, &s->vel, &dv);
         s->flame_timer += dt;
         if (s->flame_timer > 0.066f) {
