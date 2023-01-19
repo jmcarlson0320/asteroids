@@ -1,4 +1,5 @@
 #include "defs.h"
+#include "bloom.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
