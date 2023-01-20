@@ -3,7 +3,6 @@ refactor
     each component in its own file
     globals -> static variables in component file
     replace magic numbers with constants
-    take bloom code out of main
 assets
     enemy ship
     bitmap (png)
@@ -26,9 +25,7 @@ game states
         bitmap logo
     score
 software bloom effect
-    look at efficiency
-        downsample before bluring
-        implement motion blur version
+    implement motion blur version
     colored asteroids
     background blinking stars
     add to tiny-fw

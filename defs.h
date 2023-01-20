@@ -133,13 +133,9 @@ typedef struct {
 
 typedef struct asteroids asteroids;
 
-// each gamestate implements these
-typedef void (*on_update)(asteroids *game, float dt);
-typedef void (*on_render)(asteroids *game);
-
 struct asteroids {
-    on_update update;
-    on_render render;
+    void (*update)(asteroids *game, float dt);
+    void (*render)(asteroids *game);
     int input[NUM_INPUTS];
     float timer;
     int cur_color;
@@ -161,14 +157,11 @@ struct asteroids {
  * ***************************************************************************/
 extern const int COLORS[NUM_COLORS];
 
-void get_user_input(asteroids *game, App *app);
-void handle_user_input(asteroids *game);
 void asteroids_init(asteroids *game);
-void asteroids_shutdown(asteroids *game);
-
-void default_state(asteroids *game);
+void get_user_input(asteroids *game, App *app);
 void asteroids_update(asteroids *game, float dt);
 void asteroids_render(asteroids *game);
+void asteroids_shutdown(asteroids *game);
 
 void clear_asteroids(asteroids *game);
 int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);

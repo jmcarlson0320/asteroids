@@ -1,51 +1,55 @@
-#include <tiny-fw.h>
-#include <math.h>
 #include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-#include <string.h>
-#include "list.h"
-#include "particle.h"
-#include "bloom.h"
+#include <tiny-fw.h>
 #include "defs.h"
 
-int main(int argc, char *argv[])
+App app;
+int app_is_running = 0;
+
+asteroids *game;
+
+void init()
 {
-    App app = app_create(WIDTH, HEIGHT, SCALE_FACTOR);
-
-    asteroids *game = malloc(sizeof(asteroids));
-    asteroids_init(game);
-
-    int *pixels = malloc(sizeof(int) * WIDTH * HEIGHT);
-    Bitmap blurred = bitmap_create(WIDTH, HEIGHT, pixels);
-
-    int BLOOM = 1;
-    int bloom_spread = 5;
-    float bloom_intensity = 2;
-
+    app = app_create(WIDTH, HEIGHT, SCALE_FACTOR);
     app_start(&app);
-    while (app.running) {
-        app_update(&app);
+    app_is_running = 1;
 
-        get_user_input(game, &app);
+    game = malloc(sizeof(asteroids));
+    asteroids_init(game);
+}
 
-        bloom_debug_controls(app.keyboard.pressed, &BLOOM, &bloom_spread, &bloom_intensity);
-        asteroids_update(game, app.time.dt_sec);
-
-        clear_screen();
-        asteroids_render(game);
-        if (BLOOM) {
-            blur_fast(app.graphics.pixels_rgb, pixels, WIDTH, HEIGHT, bloom_spread, bloom_intensity);
-            draw_bitmap(&blurred, 0, 0, WIDTH - 1, HEIGHT - 1, 0, 0);
-            asteroids_render(game);
-        }
-
-        app_draw_graphics(&app);
+void update()
+{
+    app_update(&app);
+    if (app.keyboard.pressed[KEY_ESCAPE]) {
+        app_is_running = 0;
     }
-    app_quit(&app);
 
+    get_user_input(game, &app);
+    asteroids_update(game, app.time.dt_sec);
+}
+
+void render()
+{
+    clear_screen();
+    asteroids_render(game);
+    app_draw_graphics(&app);
+}
+
+void cleanup()
+{
     asteroids_shutdown(game);
     free(game);
+    app_quit(&app);
+}
+
+int main()
+{
+    init();
+    while (app_is_running) {
+        update();
+        render();
+    }
+    cleanup();
 
     return 0;
 }

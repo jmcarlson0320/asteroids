@@ -26,93 +26,6 @@ const int KEY_MAP[NUM_INPUTS] = {
     [PREV_LETTER] = KEY_Z
 };
 
-static void default_update(asteroids *game, float dt)
-{
-    printf("update function not defined!!!\n");
-}
-
-static void default_render(asteroids *game)
-{
-    printf("render function not defined!!!\n");
-}
-
-void default_state(asteroids *game)
-{
-    game->update = default_update;
-    game->render = default_render;
-}
-
-void asteroids_update(asteroids *game, float dt)
-{
-    game->update(game, dt);
-}
-
-void asteroids_render(asteroids *game)
-{
-    game->render(game);
-}
-
-static void debug_controls(asteroids *game, App *app)
-{
-    if (app->keyboard.pressed[KEY_N]) {
-        spawn_asteroid(game, 10, 10, rand() % 3);
-    }
-
-    if (app->keyboard.pressed[KEY_M]) {
-        asteroid *a = list_pop(game->active_asteroids, 0);
-        if (a) {
-            list_append(game->inactive_asteroids, a);
-        }
-    }
-
-    if (app->keyboard.pressed[KEY_T]) {
-        transition_to_title(game);
-    }
-
-    if (app->keyboard.pressed[KEY_P]) {
-        transition_to_play(game);
-    }
-
-    if (app->keyboard.pressed[KEY_G]) {
-        transition_to_gameover(game);
-    }
-
-    if (app->keyboard.pressed[KEY_R]) {
-        transition_to_reset(game);
-    }
-
-    if (app->keyboard.pressed[KEY_1]) {
-        transition_to_test(game);
-    }
-
-    if (app->keyboard.pressed[KEY_H]) {
-        transition_to_highscore(game);
-    }
-}
-
-void get_user_input(asteroids *game, App *app)
-{
-    // key stays on while held, uses app->keyboard.down[]
-    // ship controls use this style of input
-    for (int i = 0; i < NUM_INPUTS; i++) {
-        game->input[i] = app->keyboard.down[KEY_MAP[i]];
-    }
-
-    // key triggers once per press, uses app->keyboard.pressed[]
-    // fire weapon uses this style of input
-    game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
-    game->input[PREV_LETTER] = app->keyboard.pressed[KEY_MAP[PREV_LETTER]];
-    game->input[NEXT_LETTER] = app->keyboard.pressed[KEY_MAP[NEXT_LETTER]];
-
-    if (game->input[QUIT] == ACTIVE) {
-        app->running = 0;
-    }
-
-#ifdef DEBUG
-    debug_controls(game, app);
-#endif // DEBUG
-}
-
 void asteroids_init(asteroids *game)
 {
     for (int i = 0; i < NUM_INPUTS; i++) {
@@ -154,6 +67,94 @@ void asteroids_init(asteroids *game)
     }
 
     transition_to_title(game);
+}
+
+void get_user_input(asteroids *game, App *app)
+{
+    // key stays on while held, uses app->keyboard.down[]
+    // ship controls use this style of input
+    for (int i = 0; i < NUM_INPUTS; i++) {
+        game->input[i] = app->keyboard.down[KEY_MAP[i]];
+    }
+
+    // key triggers once per press, uses app->keyboard.pressed[]
+    // fire weapon uses this style of input
+    game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
+    game->input[PREV_LETTER] = app->keyboard.pressed[KEY_MAP[PREV_LETTER]];
+    game->input[NEXT_LETTER] = app->keyboard.pressed[KEY_MAP[NEXT_LETTER]];
+
+    if (game->input[QUIT] == ACTIVE) {
+        app->running = 0;
+    }
+
+#ifdef DEBUG
+    debug_controls(game, app);
+#endif // DEBUG
+}
+
+void asteroids_update(asteroids *game, float dt)
+{
+    game->update(game, dt);
+}
+
+void asteroids_render(asteroids *game)
+{
+    game->render(game);
+}
+
+void asteroids_shutdown(asteroids *game)
+{
+    List_Iterator it = list_iterator(game->active_asteroids);
+    while (list_has_next(&it)) {
+        free(list_next(&it));
+    }
+
+    list_delete(game->active_asteroids);
+    it = list_iterator(game->inactive_asteroids);
+    while (list_has_next(&it)) {
+        free(list_next(&it));
+    }
+
+    list_delete(game->inactive_asteroids);
+    free_ship_model();
+}
+
+static void debug_controls(asteroids *game, App *app)
+{
+    if (app->keyboard.pressed[KEY_N]) {
+        spawn_asteroid(game, 10, 10, rand() % 3);
+    }
+
+    if (app->keyboard.pressed[KEY_M]) {
+        asteroid *a = list_pop(game->active_asteroids, 0);
+        if (a) {
+            list_append(game->inactive_asteroids, a);
+        }
+    }
+
+    if (app->keyboard.pressed[KEY_T]) {
+        transition_to_title(game);
+    }
+
+    if (app->keyboard.pressed[KEY_P]) {
+        transition_to_play(game);
+    }
+
+    if (app->keyboard.pressed[KEY_G]) {
+        transition_to_gameover(game);
+    }
+
+    if (app->keyboard.pressed[KEY_R]) {
+        transition_to_reset(game);
+    }
+
+    if (app->keyboard.pressed[KEY_1]) {
+        transition_to_test(game);
+    }
+
+    if (app->keyboard.pressed[KEY_H]) {
+        transition_to_highscore(game);
+    }
 }
 
 void clear_asteroids(asteroids *game)
@@ -258,23 +259,4 @@ void load_scores(asteroids *game, char *filename)
 void save_scores(asteroids *game, char *filename)
 {
 
-}
-
-void asteroids_shutdown(asteroids *game)
-{
-    List_Iterator it = list_iterator(game->active_asteroids);
-    while (list_has_next(&it)) {
-        free(list_next(&it));
-    }
-
-    list_delete(game->active_asteroids);
-
-    it = list_iterator(game->inactive_asteroids);
-    while (list_has_next(&it)) {
-        free(list_next(&it));
-    }
-
-    list_delete(game->inactive_asteroids);
-
-    free_ship_model();
 }

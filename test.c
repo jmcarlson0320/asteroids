@@ -19,7 +19,6 @@ static void test_render(asteroids *game)
 
 void transition_to_test(asteroids *game)
 {
-    default_state(game);
     game->update = test_update;
     game->render = test_render;
     ship_explosion_init(&boom);

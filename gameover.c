@@ -49,7 +49,6 @@ static void gameover_render(asteroids *game)
 
 void transition_to_gameover(asteroids *game)
 {
-    default_state(game);
     game->update = gameover_update;
     game->render = gameover_render;
     clear_initials();

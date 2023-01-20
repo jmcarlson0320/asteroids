@@ -155,7 +155,6 @@ static void play_render(asteroids *game)
 
 void transition_to_play(asteroids *game)
 {
-    default_state(game);
     game->update = play_update;
     game->render = play_render;
 
