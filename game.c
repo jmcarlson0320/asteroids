@@ -119,6 +119,7 @@ void asteroids_shutdown(asteroids *game)
     free_ship_model();
 }
 
+#ifdef DEBUG
 static void debug_controls(asteroids *game, App *app)
 {
     if (app->keyboard.pressed[KEY_N]) {
@@ -156,6 +157,7 @@ static void debug_controls(asteroids *game, App *app)
         transition_to_highscore(game);
     }
 }
+#endif //DEBUG
 
 void clear_asteroids(asteroids *game)
 {

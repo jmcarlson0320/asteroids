@@ -24,6 +24,7 @@ static void title_update(asteroids *game, float dt)
     if (game->input[FIRE]) {
         start(game);
     }
+
     // color change timer
     game->timer += dt;
     if (game->timer >= 0.1f) {
@@ -37,8 +38,6 @@ static void title_update(asteroids *game, float dt)
 
 static void title_render(asteroids *game)
 {
-//    clear_screen();
-
     List_Iterator it = list_iterator(game->active_asteroids);
     asteroid *a;
     while ((a = list_next(&it))) {

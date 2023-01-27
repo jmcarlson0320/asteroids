@@ -4,8 +4,6 @@
 #define SCORES_FILENAME "highscores.data"
 #define BUFFER_SIZE 256
 
-static float timer_sec = 0.0f;
-
 static void render_scoreboard(score scoreboard[], int num_scores)
 {
     char scores[BUFFER_SIZE] = {'\0'};
@@ -17,11 +15,6 @@ static void render_scoreboard(score scoreboard[], int num_scores)
     }
 
     draw_text(scores, WIDTH / 2 - (7 * 15 / 2), HEIGHT / 5, 0xffffff);
-}
-
-static void timer(asteroids *game)
-{
-    transition_to_title(game);
 }
 
 static void highscore_update(asteroids *game, float dt)
