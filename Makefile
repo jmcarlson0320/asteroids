@@ -9,9 +9,6 @@ $(EXE): main.o list.o particle.o ship.o explosion.o ship_explosion.o utils.o ast
 wf: wf_util.o list.o
 	$(CC) $(INCLUDES) -o $@ $^ $(LIBS)
 
-run: $(EXE)
-	./$(EXE)
-
 list.o: list.h
 particle.o: particle.h
 ship.o: defs.h
@@ -29,6 +26,9 @@ test.o: defs.h
 start.o: defs.h
 wf_util.o: list.h
 bloom.o: bloom.h defs.h
+
+run: $(EXE)
+	./$(EXE)
 
 clean:
 	rm *.o $(EXE) wf
