@@ -1,34 +1,24 @@
-refactor
-    consistent first-class ADT
-    each component in its own file
-    globals -> static variables in component file
-    replace magic numbers with constants
-assets
+essential fuctions
     enemy ship
-    bitmap (png)
-        title
-        highscore
-game logic
-    collision detections
-        tweak size and pos of bounding circle
-game states
-    play
-        enemy ship
-        clear stage
-            reset next stage
-    game over
-        enter score
-            file to store scores
-            user input
-            display
-    start screen
-        bitmap logo
-    score
-software bloom effect
-    implement motion blur version
-    colored asteroids
-    background blinking stars
-    add to tiny-fw
-tiny-fw
-    specify color when drawing wireframes
-    actually calculate timing/delay
+        model
+        logic
+        enemy targeting
+            calculate angle +/- some random amount
+    highscore
+refactor
+    consistent state change code
+        sometimes the previous state initializes for the next state, other times the new state initializes itself
+        states should initialize themselves. if they need to know which state was previous, look at the gamestate variable in the game context
+        during initialization, the current state sets the gamestate variable.
+        initialize means setup the game context
+    replace magic numbers with constants
+extra features
+    software bloom effect
+        implement motion blur version
+        colored asteroids
+        background blinking stars
+        add to tiny-fw
+    tiny-fw
+        sound effects
+        specify color when drawing wireframes
+        actually calculate timing/delay

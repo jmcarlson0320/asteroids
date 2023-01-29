@@ -6,15 +6,14 @@ static void start(asteroids *game)
     // center ship
     ship_init(&game->player, WIDTH / 2, HEIGHT / 2);
 
-    // two large asteroids
     clear_asteroids(game);
-    spawn_asteroid(game, rand() % WIDTH * 0.7, rand() % HEIGHT * 0.7, LARGE);
-    spawn_asteroid(game, rand() % WIDTH * 0.7, rand() % HEIGHT * 0.7, LARGE);
+    for (int i = 0; i < NUM_START_ASTEROIDS; i++) {
+        spawn_asteroid(game, rand() % WIDTH * 0.7, rand() % HEIGHT * 0.7, LARGE);
+    }
 
-    // zero out score
+    game->stage = 0;
+    game->lives = 3;
     game->score = 0;
-
-    // reset enemy timer
     game->enemy_timer = 0;
     transition_to_start(game);
 }
@@ -23,6 +22,7 @@ static void title_update(asteroids *game, float dt)
 {
     if (game->input[FIRE]) {
         start(game);
+        return;
     }
 
     // color change timer
@@ -52,6 +52,7 @@ void transition_to_title(asteroids *game)
 {
     game->update = title_update;
     game->render = title_render;
+    game->state = TITLE;
 
     clear_asteroids(game);
     for (int i = 0; i < 10; i++) {

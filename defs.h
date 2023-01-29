@@ -6,8 +6,8 @@
 #include "list.h"
 
 #define SCALE_FACTOR 3
-#define WIDTH 320
-#define HEIGHT 200
+#define WIDTH 400
+#define HEIGHT 300
 #define NUM_POINTS_ASTEROID 11
 #define MAX_BULLETS 4
 #define BULLET_SPEED 350
@@ -19,7 +19,18 @@
 #define ACTIVE 1
 #define INACTIVE 0
 #define MAX_ASTEROIDS 64
+#define NUM_START_ASTEROIDS 2
 #define NUM_HIGHSCORES 10
+
+enum gamestate {
+    TITLE,
+    START,
+    PLAY,
+    RESET,
+    GAMEOVER,
+    HIGHSCORE,
+    NUM_GAMESTATES
+};
 
 enum colors {
     RED,
@@ -37,7 +48,7 @@ enum inputs {
     LEFT,
     RIGHT,
     THRUST,
-    START,
+    START_GAME,
     TELEPORT,
     QUIT,
     NEXT_LETTER,
@@ -136,11 +147,13 @@ typedef struct asteroids asteroids;
 struct asteroids {
     void (*update)(asteroids *game, float dt);
     void (*render)(asteroids *game);
+    int state;
     int input[NUM_INPUTS];
     float timer;
     int cur_color;
     int score;
     int lives;
+    int stage;
     float enemy_timer;
     ship player;
     List *active_asteroids;

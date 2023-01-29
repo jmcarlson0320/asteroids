@@ -19,11 +19,20 @@ const int KEY_MAP[NUM_INPUTS] = {
     [LEFT] = KEY_Z,
     [RIGHT] = KEY_C,
     [THRUST] = KEY_N,
-    [START] = KEY_RETURN,
+    [START_GAME] = KEY_RETURN,
     [TELEPORT] = KEY_SPACE,
     [QUIT] = KEY_Q,
     [NEXT_LETTER] = KEY_C,
     [PREV_LETTER] = KEY_Z
+};
+
+char *GAME_STATE_LABELS[NUM_GAMESTATES]  = {
+    [TITLE] = "title",
+    [START] = "start",
+    [PLAY] = "play",
+    [RESET] = "reset",
+    [GAMEOVER] = "gameover",
+    [HIGHSCORE] = "highscore"
 };
 
 void asteroids_init(asteroids *game)
@@ -60,6 +69,7 @@ void asteroids_init(asteroids *game)
     game->score = 0;
     game->lives = 3;
     game->enemy_timer = 0;
+    game->stage = 0;
 
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         explosion *e = &game->explosion_list[i];
@@ -100,6 +110,7 @@ void asteroids_update(asteroids *game, float dt)
 void asteroids_render(asteroids *game)
 {
     game->render(game);
+    draw_text(GAME_STATE_LABELS[game->state], WIDTH / 2 - 20, HEIGHT - 10, 0xffffff);
 }
 
 void asteroids_shutdown(asteroids *game)

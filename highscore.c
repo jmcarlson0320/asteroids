@@ -31,6 +31,7 @@ void transition_to_highscore(asteroids *game)
 {
     game->update = highscore_update;
     game->render = highscore_render;
+    game->state = HIGHSCORE;
 
     load_scores(game, SCORES_FILENAME);
 }

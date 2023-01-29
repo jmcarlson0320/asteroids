@@ -68,6 +68,7 @@ static void check_collisions(asteroids *game)
         list_append(game->inactive_asteroids, a);
     }
     list_delete(to_remove);
+
 }
 
 static void play_update(asteroids *game, float dt)
@@ -115,6 +116,14 @@ static void play_update(asteroids *game, float dt)
     update_explosions(game->explosion_list, dt);
 
     check_collisions(game);
+
+    if (game->active_asteroids->length == 0) {
+        game->stage++;
+        clear_asteroids(game);
+        for (int i = 0; i < NUM_START_ASTEROIDS + game->stage; i++) {
+            spawn_asteroid(game, rand() % WIDTH * 0.7, rand() % HEIGHT * 0.7, LARGE);
+        }
+    }
 }
 
 static void play_render(asteroids *game)
@@ -157,6 +166,7 @@ void transition_to_play(asteroids *game)
 {
     game->update = play_update;
     game->render = play_render;
+    game->state = PLAY;
 
     game->player.vel = new_vec2(0, 0);
 }

@@ -101,6 +101,7 @@ void transition_to_reset(asteroids *game)
 {
     game->update = reset_update;
     game->render= reset_render;
+    game->state = RESET;
 
     reset_timer = 0.0f;
     flash_timer = 0.0f;
