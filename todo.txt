@@ -1,10 +1,12 @@
 essential fuctions
     enemy ship
+        modify test state to run enemy code
         model
         logic
         enemy targeting
             calculate angle +/- some random amount
     highscore
+        display asteroids behind scores, like the title screen
 refactor
     consistent state change code
         sometimes the previous state initializes for the next state, other times the new state initializes itself
@@ -13,6 +15,10 @@ refactor
         initialize means setup the game context
     replace magic numbers with constants
 extra features
+    wf_util
+        at program start
+            if file given as argument exists, load that file for editing
+            if file doesn't exist, create a new file
     software bloom effect
         implement motion blur version
         colored asteroids

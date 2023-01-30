@@ -29,6 +29,7 @@ enum gamestate {
     RESET,
     GAMEOVER,
     HIGHSCORE,
+    TEST,
     NUM_GAMESTATES
 };
 
@@ -89,6 +90,14 @@ typedef struct {
     enum rotate_state ctl_rotate;
     int ctl_thrust;
 } ship;
+
+typedef struct {
+    vec2 *model;
+    float scale;
+    vec2 pos;
+    vec2 vel;
+    float shot_timer;
+} enemy;
 
 typedef struct {
     vec2 vel;

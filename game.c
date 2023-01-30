@@ -32,8 +32,13 @@ char *GAME_STATE_LABELS[NUM_GAMESTATES]  = {
     [PLAY] = "play",
     [RESET] = "reset",
     [GAMEOVER] = "gameover",
-    [HIGHSCORE] = "highscore"
+    [HIGHSCORE] = "highscore",
+    [TEST] = "test"
 };
+
+#ifdef DEBUG
+static void debug_controls(asteroids *game, App *app);
+#endif // DEBUG
 
 void asteroids_init(asteroids *game)
 {
