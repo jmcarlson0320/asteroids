@@ -92,18 +92,19 @@ typedef struct {
 } ship;
 
 typedef struct {
-    vec2 *model;
-    float scale;
     vec2 pos;
     vec2 vel;
+    float angle;
+    float scale;
     float shot_timer;
+    vec2 *model;
 } enemy;
 
 typedef struct {
+    vec2 pos;
     vec2 vel;
     float angle;
     float ang_vel;
-    vec2 pos;
     enum asteroid_type type;
     enum asteroid_model model;
 } asteroid;

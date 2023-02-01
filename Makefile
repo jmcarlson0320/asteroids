@@ -3,7 +3,7 @@ CFLAGS = -g -Wall -I/Users/jmc/devel/include -I/opt/homebrew/include -DDEBUG
 LIBS = -L/Users/jmc/devel/lib -L/opt/homebrew/lib -ltinyfw -lm -lSDL2
 EXE = asteroids
 
-$(EXE): main.o list.o particle.o ship.o explosion.o ship_explosion.o utils.o asteroid.o game.o title.o play.o reset.o gameover.o highscore.o test.o start.o bloom.o
+$(EXE): main.o list.o particle.o ship.o explosion.o ship_explosion.o utils.o asteroid.o game.o title.o play.o reset.o gameover.o highscore.o test.o start.o bloom.o enemy.o
 	$(CC) $(INCLUDES) -o $@ $^ $(LIBS)
 
 wf: wf_util.o list.o
@@ -26,6 +26,7 @@ test.o: defs.h
 start.o: defs.h
 wf_util.o: list.h
 bloom.o: bloom.h defs.h
+enemy.o: defs.h
 
 run: $(EXE)
 	./$(EXE)

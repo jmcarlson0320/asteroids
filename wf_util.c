@@ -173,23 +173,19 @@ void write_to_file(model *m, char *filename)
     fclose(fp);
 }
 
-model read_from_file(char *filename)
+model read_from_file(FILE *fp)
 {
-    FILE *fp = fopen(filename, "r");
-    if (!fp) {
-        printf("could not open file %s\n", filename);
-        exit(1);
-    }
     model m;
     m.points = list_new();
     m.num_points = 0;
-    fscanf(fp, "%d\n", &m.num_points);
-    for (int i = 0; i < m.num_points; i++) {
-        vec2 *point = malloc(sizeof(vec2));
-        fscanf(fp, "%f %f\n", &point->e[X_COOR], &point->e[Y_COOR]);
-        list_append(m.points, point);
+    if (fp) {
+        fscanf(fp, "%d\n", &m.num_points);
+        for (int i = 0; i < m.num_points; i++) {
+            vec2 *point = malloc(sizeof(vec2));
+            fscanf(fp, "%f %f\n", &point->e[X_COOR], &point->e[Y_COOR]);
+            list_append(m.points, point);
+        }
     }
-    fclose(fp);
     return m;
 }
 
@@ -201,7 +197,18 @@ int main(int argc, char *argv[])
     }
 
     char *output_filename = argv[1];
-    List *points = list_new();
+    FILE *fp = fopen(output_filename, "r");
+    model m = read_from_file(fp);
+    List *points = m.points;
+    if (m.num_points > 0) {
+        List_Iterator it = list_iterator(points);
+        while(list_has_next(&it)) {
+            vec2 *cur = list_next(&it);
+            vec2_mult(cur, cur, 40);
+            vec2 offset = new_vec2(WIDTH / 2, HEIGHT / 2);
+            vec2_add(cur, cur, &offset);
+        }
+    }
     enum mode mode = DRAW;
     vec2 *selected_point = NULL;
     vec2 *nearest_point = NULL;
@@ -293,6 +300,8 @@ int main(int argc, char *argv[])
 
         app_draw_graphics(&app);
     }
+
+
 
     app_quit(&app);
 }
