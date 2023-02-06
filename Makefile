@@ -1,7 +1,9 @@
 CC = gcc
-CFLAGS = -g -Wall -I/Users/jmc/devel/include -I/opt/homebrew/include -DDEBUG
+CFLAGS = -g -Wall -I/Users/jmc/devel/include -I/opt/homebrew/include
 LIBS = -L/Users/jmc/devel/lib -L/opt/homebrew/lib -ltinyfw -lm -lSDL2
 EXE = asteroids
+
+all: $(EXE) wf
 
 $(EXE): main.o list.o particle.o ship.o explosion.o ship_explosion.o utils.o asteroid.o game.o title.o play.o reset.o gameover.o highscore.o test.o start.o bloom.o enemy.o
 	$(CC) $(INCLUDES) -o $@ $^ $(LIBS)

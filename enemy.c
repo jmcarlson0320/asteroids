@@ -32,29 +32,27 @@ void free_enemy_model()
     free(enemy_model);
 }
 
-void enemy_init(enemy *s, float x, float y)
+void enemy_init(enemy *e, float x, float y)
 {
     load_enemy_model();
-    s->angle = 3.0f * M_PI / 2.0f;
-    s->scale = 10;
-    s->pos = new_vec2(x, y);
-
-    s->vel = new_vec2(0, 0);
+    e->angle = 3.0f * M_PI / 2.0f;
+    e->scale = 10;
+    e->pos = new_vec2(x, y);
+    e->vel = new_vec2(60, 0);
 }
 
-void enemy_update(enemy *s, float dt)
+void enemy_update(enemy *e, float dt)
 {
     vec2 ds;
-    vec2_mult(&ds, &s->vel, dt);
-    vec2_add(&s->pos, &s->pos, &ds);
+    vec2_mult(&ds, &e->vel, dt);
+    vec2_add(&e->pos, &e->pos, &ds);
 }
 
-void enemy_render(enemy *s)
+void enemy_render(enemy *e)
 {
-    // build transformation, needs to be in this order
     transform t = new_transform();
-    transform_scale(&t, s->scale);
-    transform_rotate(&t, s->angle);
-    transform_translate(&t, s->pos.e[X_COOR], s->pos.e[Y_COOR]);
+    transform_scale(&t, e->scale);
+    transform_rotate(&t, e->angle);
+    transform_translate(&t, e->pos.e[X_COOR], e->pos.e[Y_COOR]);
     draw_wireframe(enemy_model, num_points_enemy_model, &t);
 }

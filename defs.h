@@ -98,6 +98,7 @@ typedef struct {
     float scale;
     float shot_timer;
     vec2 *model;
+    int active;
 } enemy;
 
 typedef struct {
@@ -166,6 +167,7 @@ struct asteroids {
     int stage;
     float enemy_timer;
     ship player;
+    enemy enemy;
     List *active_asteroids;
     List *inactive_asteroids;
     bullet_list bullet_list;
@@ -190,13 +192,13 @@ void clear_asteroids(asteroids *game);
 int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
 void update_asteroid_list(List *asteroids, float dt);
 void update_bullets(bullet_list *bullet_list, float dt);
+void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle);
+void spawn_enemy(asteroids *game);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
 void update_explosions(explosion *expl_array, float dt);
-
 void load_scores(asteroids *game, char *filename);
 void save_scores(asteroids *game, char *filename);
 
-// state transitions
 void transition_to_title(asteroids *game);
 void transition_to_start(asteroids *game);
 void transition_to_reset(asteroids *game);
@@ -214,6 +216,15 @@ void ship_init(ship *s, float x, float y);
 void ship_update(ship *s, float dt);
 void ship_render(ship *s);
 void draw_ship_wireframe(int x, int y);
+
+/******************************************************************************
+ * ship.c
+ * ***************************************************************************/
+void load_enemy_model();
+void free_enemy_model();
+void enemy_init(enemy *e, float x, float y);
+void enemy_update(enemy *e, float dt);
+void enemy_render(enemy *e);
 
 /******************************************************************************
  * asteroid.c

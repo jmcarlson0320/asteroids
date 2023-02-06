@@ -1,3 +1,4 @@
+#include <stdio.h>
 #include <stdlib.h>
 #include <tiny-fw.h>
 #include "defs.h"
