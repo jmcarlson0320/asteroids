@@ -196,6 +196,7 @@ void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float
 void spawn_enemy(asteroids *game);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
 void update_explosions(explosion *expl_array, float dt);
+void explode_asteroid(asteroids *game, asteroid *a);
 void load_scores(asteroids *game, char *filename);
 void save_scores(asteroids *game, char *filename);
 

@@ -40,19 +40,7 @@ static void check_collisions(asteroids *game)
 
                     list_append(to_remove, a);
 
-                    // split the asteroid into smaller pieces
-                    float x = a->pos.e[X_COOR];
-                    float y = a->pos.e[Y_COOR];
-                    if (a->type > SMALL) {
-                        spawn_asteroid(game, x, y, a->type - 1);
-                        spawn_asteroid(game, x, y, a->type - 1);
-                    }
-
-                    // start an explosion animation
-                    explosion *e = find_inactive_explosion(game->explosion_list, MAX_EXPLOSIONS);
-                    if (e) {
-                        explosion_start(e, x, y);
-                    }
+                    explode_asteroid(game, a);
 
                     game->score += asteroid_scores[a->type];
                 }

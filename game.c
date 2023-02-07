@@ -258,6 +258,22 @@ void update_explosions(explosion *expl_array, float dt)
     }
 }
 
+void explode_asteroid(asteroids *game, asteroid *a)
+{
+    float x = a->pos.e[X_COOR];
+    float y = a->pos.e[Y_COOR];
+
+    if (a->type > SMALL) {
+        spawn_asteroid(game, x, y, a->type - 1);
+        spawn_asteroid(game, x, y, a->type - 1);
+    }
+
+    explosion *e = find_inactive_explosion(game->explosion_list, MAX_EXPLOSIONS);
+    if (e) {
+        explosion_start(e, x, y);
+    }
+}
+
 void load_scores(asteroids *game, char *filename)
 {
     FILE *fp = fopen(filename, "r");
