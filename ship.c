@@ -6,7 +6,7 @@
 static char *ship_model_filename = "models/ship.model";
 
 static vec2 *ship_model;
-static int num_points_ship_model;
+static int num_vertices_ship_model;
 
 static vec2 flame_model[3] = {
     {{-0.8f,  0.0f}},
@@ -22,14 +22,12 @@ void load_ship_model()
         exit(1);
     }
 
-    num_points_ship_model = 0;
-    fscanf(fp, "%d\n", &num_points_ship_model);
+    num_vertices_ship_model = 0;
+    fscanf(fp, "%d\n", &num_vertices_ship_model);
 
-    ship_model = malloc(sizeof(vec2) * num_points_ship_model);
+    ship_model = malloc(sizeof(vec2) * num_vertices_ship_model);
 
-    // for each point
-    for (int i = 0; i < num_points_ship_model; i++) {
-        //      read it into the models array
+    for (int i = 0; i < num_vertices_ship_model; i++) {
         fscanf(fp, "%f %f\n", &ship_model[i].e[X_COOR], &ship_model[i].e[Y_COOR]);
     }
     fclose(fp);
@@ -97,17 +95,16 @@ void draw_ship_wireframe(int x, int y)
     transform_scale(&t, 10);
     transform_rotate(&t, - M_PI / 2);
     transform_translate(&t, x, y);
-    draw_wireframe(ship_model, num_points_ship_model, &t);
+    draw_wireframe(ship_model, num_vertices_ship_model, &t);
 }
 
 void ship_render(ship *s)
 {
-    // build transformation, needs to be in this order
     transform t = new_transform();
     transform_scale(&t, s->scale);
     transform_rotate(&t, s->angle);
     transform_translate(&t, s->pos.e[X_COOR], s->pos.e[Y_COOR]);
-    draw_wireframe(ship_model, num_points_ship_model, &t);
+    draw_wireframe(ship_model, num_vertices_ship_model, &t);
 
     if (s->ctl_thrust && s->flame_toggle) {
         draw_wireframe(flame_model, 3, &t);

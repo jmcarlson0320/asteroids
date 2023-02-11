@@ -97,8 +97,9 @@ void get_user_input(asteroids *game, App *app)
     game->input[FIRE] = app->keyboard.pressed[KEY_MAP[FIRE]];
     game->input[PREV_LETTER] = app->keyboard.pressed[KEY_MAP[PREV_LETTER]];
     game->input[NEXT_LETTER] = app->keyboard.pressed[KEY_MAP[NEXT_LETTER]];
+    game->input[START_GAME] = app->keyboard.pressed[KEY_MAP[START_GAME]];
 
-    if (game->input[QUIT] == ACTIVE) {
+    if (game->input[QUIT]) {
         app->running = 0;
     }
 
@@ -234,6 +235,19 @@ void update_bullets(bullet_list *bullet_list, float dt)
             }
         }
     }
+}
+
+void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle)
+{
+    // unimplemented
+    return;
+}
+
+void spawn_enemy(asteroids *game)
+{
+    // unimplemented
+    printf("log: spawn_enemy() called\n");
+    return;
 }
 
 explosion *find_inactive_explosion(explosion *expl_array, int size)

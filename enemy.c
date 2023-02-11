@@ -20,7 +20,6 @@ void load_enemy_model()
     fscanf(fp, "%d\n", &num_points_enemy_model);
 
     enemy_model = malloc(sizeof(vec2) * num_points_enemy_model);
-
     for (int i = 0; i < num_points_enemy_model; i++) {
         fscanf(fp, "%f %f\n", &enemy_model[i].e[X_COOR], &enemy_model[i].e[Y_COOR]);
     }
