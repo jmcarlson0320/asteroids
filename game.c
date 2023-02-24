@@ -52,8 +52,9 @@ void asteroids_init(asteroids *game)
     game->cur_color = RED;
 
     ship_init(&game->player, WIDTH / 2, HEIGHT / 2);
+    enemy_init(&game->enemy);
 
-    load_models();
+    asteroid_load_models();
     game->active_asteroids = list_new();
     game->inactive_asteroids = list_new();
     for (int i = 0; i < MAX_ASTEROIDS; i++) {
@@ -116,7 +117,9 @@ void asteroids_update(asteroids *game, float dt)
 void asteroids_render(asteroids *game)
 {
     game->render(game);
+#ifdef DEBUG
     draw_text(GAME_STATE_LABELS[game->state], WIDTH / 2 - 20, HEIGHT - 10, 0xffffff);
+#endif // DEBUG
 }
 
 void asteroids_shutdown(asteroids *game)
@@ -240,13 +243,6 @@ void update_bullets(bullet_list *bullet_list, float dt)
 void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle)
 {
     // unimplemented
-    return;
-}
-
-void spawn_enemy(asteroids *game)
-{
-    // unimplemented
-    printf("log: spawn_enemy() called\n");
     return;
 }
 

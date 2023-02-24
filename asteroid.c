@@ -29,7 +29,7 @@ static char *filenames[3] = {
 
 static vec2 asteroid_models[NUM_MODELS][NUM_POINTS_ASTEROID];
 
-void load_models()
+void asteroid_load_models()
 {
     for (int i = 0; i < NUM_MODELS; i++) {
         // open the file

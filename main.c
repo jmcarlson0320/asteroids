@@ -4,9 +4,8 @@
 #include "defs.h"
 
 App app;
-int app_is_running = 0;
-
 asteroids *game;
+int app_is_running = 0;
 
 void init()
 {
@@ -21,7 +20,7 @@ void init()
 void update()
 {
     app_update(&app);
-    if (app.keyboard.pressed[KEY_ESCAPE]) {
+    if (app.keyboard.pressed[KEY_MAP[QUIT]]) {
         app_is_running = 0;
     }
 

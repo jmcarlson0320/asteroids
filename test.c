@@ -4,7 +4,7 @@ static void test_update(asteroids *game, float dt)
 {
 
     if (game->input[START_GAME]) {
-        spawn_enemy(game);
+        spawn_enemy(&game->enemy);
     }
 
     ship *s = &game->player;
@@ -68,5 +68,5 @@ void transition_to_test(asteroids *game)
     game->update = test_update;
     game->render = test_render;
     game->state = TEST;
-    spawn_enemy(game);
+    spawn_enemy(&game->enemy);
 }

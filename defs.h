@@ -12,6 +12,7 @@
 #define MAX_BULLETS 4
 #define BULLET_SPEED 350
 #define BULLET_LIFETIME 1
+#define ENEMY_SPEED 100
 #define NUM_EXPLOSION_PARTICLES 10
 #define NUM_SHIP_PIECES 6
 #define MAX_EXPLOSIONS 8
@@ -181,6 +182,7 @@ struct asteroids {
  * game.c
  * ***************************************************************************/
 extern const int COLORS[NUM_COLORS];
+extern const int KEY_MAP[NUM_INPUTS];
 
 void asteroids_init(asteroids *game);
 void get_user_input(asteroids *game, App *app);
@@ -193,7 +195,6 @@ int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
 void update_asteroid_list(List *asteroids, float dt);
 void update_bullets(bullet_list *bullet_list, float dt);
 void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle);
-void spawn_enemy(asteroids *game);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
 void update_explosions(explosion *expl_array, float dt);
 void explode_asteroid(asteroids *game, asteroid *a);
@@ -219,13 +220,14 @@ void ship_render(ship *s);
 void draw_ship_wireframe(int x, int y);
 
 /******************************************************************************
- * ship.c
+ * enemy.c
  * ***************************************************************************/
 void load_enemy_model();
 void free_enemy_model();
-void enemy_init(enemy *e, float x, float y);
+void enemy_init(enemy *e);
 void enemy_update(enemy *e, float dt);
 void enemy_render(enemy *e);
+void spawn_enemy(enemy *e);
 
 /******************************************************************************
  * asteroid.c
@@ -233,7 +235,7 @@ void enemy_render(enemy *e);
 extern const int asteroid_scales[NUM_TYPES];
 extern const int asteroid_scores[NUM_TYPES];
 
-void load_models();
+void asteroid_load_models();
 void asteroid_init(asteroid *a, enum asteroid_type type);
 void asteroid_update(asteroid *a, float dt);
 void asteroid_render(asteroid *a);
