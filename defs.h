@@ -172,6 +172,7 @@ struct asteroids {
     List *active_asteroids;
     List *inactive_asteroids;
     bullet_list bullet_list;
+    bullet_list enemy_bullets;
     explosion explosion_list[MAX_EXPLOSIONS];
     ship_explosion ship_explosion;
     score score_board[NUM_HIGHSCORES];
@@ -193,6 +194,7 @@ void asteroids_shutdown(asteroids *game);
 void clear_asteroids(asteroids *game);
 int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
 void update_asteroid_list(List *asteroids, float dt);
+void init_bullets(bullet_list *bullet_list);
 void update_bullets(bullet_list *bullet_list, float dt);
 void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
@@ -228,6 +230,7 @@ void enemy_init(enemy *e);
 void enemy_update(enemy *e, float dt);
 void enemy_render(enemy *e);
 void spawn_enemy(enemy *e);
+void target_player_position(vec2 player_position);
 
 /******************************************************************************
  * asteroid.c

@@ -56,6 +56,7 @@ void enemy_update(enemy *e, float dt)
         // how should we take a shot??
         // track enemy bullets separate from player bullets
         // enemy struct includes enemy bullets array?
+        printf("firing shot\n");
         e->shot_timer = 0;
     }
 
@@ -71,6 +72,7 @@ void enemy_render(enemy *e)
     transform_rotate(&t, e->angle);
     transform_translate(&t, e->pos.e[X_COOR], e->pos.e[Y_COOR]);
     draw_wireframe(enemy_model, num_points_enemy_model, &t);
+    draw_fill_circle(last_known_player_position.e[0], last_known_player_position.e[1], 3, 0xffff00);
 }
 
 void spawn_enemy(enemy *e)
@@ -81,8 +83,7 @@ void spawn_enemy(enemy *e)
     e->active = ACTIVE;
 }
 
-void record_player_position(float x, float y)
+void target_player_position(vec2 player_position)
 {
-    last_known_player_position.e[X_COOR] = x;
-    last_known_player_position.e[Y_COOR] = y;
+    last_known_player_position = player_position;
 }

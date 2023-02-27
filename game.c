@@ -63,15 +63,8 @@ void asteroids_init(asteroids *game)
         list_append(game->inactive_asteroids, a);
     }
 
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet *b = &game->bullet_list.bullets[i];
-        b->pos = new_vec2(0, 0);
-        b->vel = new_vec2(0, 0);
-        b->active_flag = INACTIVE;
-        b->timer = 0;
-    }
+    init_bullets(&game->bullet_list);
 
-    game->bullet_list.num_bullets = 0;
     game->score = 0;
     game->lives = 3;
     game->enemy_timer = 0;
@@ -238,6 +231,19 @@ void update_bullets(bullet_list *bullet_list, float dt)
             }
         }
     }
+}
+
+
+void init_bullets(bullet_list *bullet_list)
+{
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullet *b = &bullet_list->bullets[i];
+        b->pos = new_vec2(0, 0);
+        b->vel = new_vec2(0, 0);
+        b->active_flag = INACTIVE;
+        b->timer = 0;
+    }
+    bullet_list->num_bullets = 0;
 }
 
 void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle)

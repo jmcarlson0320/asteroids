@@ -43,6 +43,7 @@ static void test_update(asteroids *game, float dt)
         }
     }
 
+    target_player_position(game->player.pos);
     enemy_update(&game->enemy, dt);
     ship_update(&game->player, dt);
     update_bullets(&game->bullet_list, dt);
