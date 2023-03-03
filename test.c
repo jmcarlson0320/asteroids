@@ -1,30 +1,40 @@
 #include "defs.h"
 
-static void test_update(asteroids *game, float dt)
+static void control_rotation(ship *s, int inputs[])
 {
-
-    if (game->input[START_GAME]) {
-        spawn_enemy(&game->enemy);
-    }
-
-    ship *s = &game->player;
-    // ship rotation
-    if (game->input[LEFT] && game->input[RIGHT]) {
+    if (inputs[LEFT] && inputs[RIGHT]) {
         s->ctl_rotate = ROTATE_STOP;
-    } else if (game->input[LEFT]) {
+    } else if (inputs[LEFT]) {
         s->ctl_rotate = ROTATE_LEFT;
-    } else if (game->input[RIGHT]) {
+    } else if (inputs[RIGHT]) {
         s->ctl_rotate = ROTATE_RIGHT;
     } else {
         s->ctl_rotate = ROTATE_STOP;
     }
+}
 
-    // ship thrust
-    if (game->input[THRUST]) {
+static void control_thrust(ship *s, int inputs[])
+{
+    if (inputs[THRUST]) {
         s->ctl_thrust = 1;
     } else {
         s->ctl_thrust = 0;
     }
+}
+
+static void control_ship(ship *s, int inputs[])
+{
+    control_rotation(s, inputs);
+    control_thrust(s, inputs);
+}
+
+static void test_update(asteroids *game, float dt)
+{
+    int *inputs = game->input;
+    ship *s = &game->player;
+
+    control_ship(s, inputs);
+    ship_update(&game->player, dt);
 
     // fire bullets
     if (game->input[FIRE] && game->bullet_list.num_bullets < MAX_BULLETS) {
@@ -43,9 +53,11 @@ static void test_update(asteroids *game, float dt)
         }
     }
 
+    if (inputs[START_GAME])
+        spawn_enemy(&game->enemy);
+
     target_player_position(game->player.pos);
     enemy_update(&game->enemy, dt);
-    ship_update(&game->player, dt);
     update_bullets(&game->bullet_list, dt);
 }
 

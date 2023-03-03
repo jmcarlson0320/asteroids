@@ -55,38 +55,49 @@ void ship_init(ship *s, float x, float y)
     s->ctl_thrust = 0;
 }
 
-void ship_update(ship *s, float dt)
+static void turn_ship(ship *s)
 {
-    switch (s->ctl_rotate) {
-        case ROTATE_LEFT:
-            s->angle -= 0.08;
-            break;
-        case ROTATE_RIGHT:
-            s->angle += 0.08;
-            break;
-        default:
-            break;
-    }
+    if (s->ctl_rotate == ROTATE_LEFT)
+        s->angle -= 0.08;
+    else if (s->ctl_rotate == ROTATE_RIGHT)
+        s->angle += 0.08;
+}
 
-    if (s->ctl_thrust) {
-        vec2 dv = new_vec2(cos(s->angle), sin(s->angle));
-        vec2_normalize(&dv, &dv);
-        vec2_mult(&dv, &dv, 4);
-        vec2_add(&s->vel, &s->vel, &dv);
-        s->flame_timer += dt;
-        if (s->flame_timer > 0.066f) {
-            s->flame_timer = 0;
-            s->flame_toggle = !s->flame_toggle;
-        }
-    }
+static void engage_thrust(ship *s, float dt)
+{
+    if (!s->ctl_thrust)
+        return;
 
+    vec2 dv = new_vec2(cos(s->angle), sin(s->angle));
+    vec2_normalize(&dv, &dv);
+    vec2_mult(&dv, &dv, 4);
+    vec2_add(&s->vel, &s->vel, &dv);
+    s->flame_timer += dt;
+    if (s->flame_timer > 0.066f) {
+        s->flame_timer = 0;
+        s->flame_toggle = !s->flame_toggle;
+    }
+}
+
+static void apply_drag(ship *s)
+{
     vec2_mult(&s->vel, &s->vel, s->drag);
+}
 
+static void move_ship(ship *s, float dt)
+{
     vec2 ds;
     vec2_mult(&ds, &s->vel, dt);
     vec2_add(&s->pos, &s->pos, &ds);
-
     s->pos = wrap_coor(s->pos, WIDTH, HEIGHT);
+}
+
+void ship_update(ship *s, float dt)
+{
+    turn_ship(s);
+    engage_thrust(s, dt);
+    apply_drag(s);
+    move_ship(s, dt);
 }
 
 void draw_ship_wireframe(int x, int y)
