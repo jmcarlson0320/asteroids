@@ -1,5 +1,6 @@
 #include "defs.h"
 
+
 static void control_rotation(ship *s, int inputs[])
 {
     if (inputs[LEFT] && inputs[RIGHT]) {
@@ -13,6 +14,7 @@ static void control_rotation(ship *s, int inputs[])
     }
 }
 
+
 static void control_thrust(ship *s, int inputs[])
 {
     if (inputs[THRUST]) {
@@ -22,11 +24,13 @@ static void control_thrust(ship *s, int inputs[])
     }
 }
 
+
 static void control_ship(ship *s, int inputs[])
 {
     control_rotation(s, inputs);
     control_thrust(s, inputs);
 }
+
 
 static void test_update(asteroids *game, float dt)
 {
@@ -37,21 +41,8 @@ static void test_update(asteroids *game, float dt)
     ship_update(&game->player, dt);
 
     // fire bullets
-    if (game->input[FIRE] && game->bullet_list.num_bullets < MAX_BULLETS) {
-        for (int i = 0; i < MAX_BULLETS; i++) {
-            bullet *b = &game->bullet_list.bullets[i];
-            if (!b->active_flag) {
-                b->active_flag = ACTIVE;
-                b->timer = 0;
-                b->pos = s->pos;
-                b->vel = vec2_unit_vec(s->angle);
-                vec2_mult(&b->vel, &b->vel, BULLET_SPEED);
-                vec2_add(&b->vel, &b->vel, &s->vel);
-                game->bullet_list.num_bullets++;
-                break;
-            }
-        }
-    }
+    if (game->input[FIRE])
+        fire_bullet(&game->bullet_list, game->player.pos, game->player.vel, game->player.angle);
 
     if (inputs[START_GAME])
         spawn_enemy(&game->enemy);

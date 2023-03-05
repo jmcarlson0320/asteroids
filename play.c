@@ -36,7 +36,7 @@ static void check_collisions(asteroids *game)
                     // reset the bullet
                     b->active_flag = INACTIVE;
                     b->timer = 0;
-                    game->bullet_list.num_bullets--;
+                    game->bullet_list.num_active_bullets--;
 
                     list_append(to_remove, a);
 
@@ -82,21 +82,8 @@ static void play_update(asteroids *game, float dt)
     }
 
     // fire bullets
-    if (game->input[FIRE] && game->bullet_list.num_bullets < MAX_BULLETS) {
-        for (int i = 0; i < MAX_BULLETS; i++) {
-            bullet *b = &game->bullet_list.bullets[i];
-            if (!b->active_flag) {
-                b->active_flag = ACTIVE;
-                b->timer = 0;
-                b->pos = s->pos;
-                b->vel = vec2_unit_vec(s->angle);
-                vec2_mult(&b->vel, &b->vel, BULLET_SPEED);
-                vec2_add(&b->vel, &b->vel, &s->vel);
-                game->bullet_list.num_bullets++;
-                break;
-            }
-        }
-    }
+    if (game->input[FIRE])
+        fire_bullet(&game->bullet_list, game->player.pos, game->player.vel, game->player.angle);
 
     ship_update(&game->player, dt);
     update_asteroid_list(game->active_asteroids, dt);
@@ -124,12 +111,7 @@ static void play_render(asteroids *game)
         asteroid_render(a);
     }
 
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet b = game->bullet_list.bullets[i];
-        if (b.active_flag) {
-            draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
-        }
-    }
+    render_bullets(&game->bullet_list);
 
     for (int i = 0; i < MAX_EXPLOSIONS; i++) {
         explosion *e = &game->explosion_list[i];

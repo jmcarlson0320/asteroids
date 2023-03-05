@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <time.h>
+#include <math.h>
 
 const int COLORS[NUM_COLORS] = {
     [RED] = 0xff0000,
@@ -64,6 +65,7 @@ void asteroids_init(asteroids *game)
     }
 
     init_bullets(&game->bullet_list);
+    init_bullets(&game->enemy_bullets);
 
     game->score = 0;
     game->lives = 3;
@@ -222,13 +224,24 @@ void update_bullets(bullet_list *bullet_list, float dt)
         if (b->active_flag) {
             if (b->timer > BULLET_LIFETIME) {
                 b->active_flag = INACTIVE;
-                bullet_list->num_bullets--;
+                bullet_list->num_active_bullets--;
             } else {
                 vec2 ds;
                 vec2_mult(&ds, &b->vel, dt);
                 vec2_add(&b->pos, &b->pos, &ds);
                 b->timer += dt;
             }
+        }
+    }
+}
+
+
+void render_bullets(bullet_list *bullet_list)
+{
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullet b = bullet_list->bullets[i];
+        if (b.active_flag) {
+            draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
         }
     }
 }
@@ -243,13 +256,36 @@ void init_bullets(bullet_list *bullet_list)
         b->active_flag = INACTIVE;
         b->timer = 0;
     }
-    bullet_list->num_bullets = 0;
+    bullet_list->num_active_bullets = 0;
 }
 
-void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle)
+bullet *find_inactive_bullet(bullet_list *bullet_list)
 {
-    // unimplemented
-    return;
+    bullet *found = NULL;
+    for (int i = 0; i < MAX_BULLETS; i++) {
+        bullet *b = &bullet_list->bullets[i];
+        if (b->active_flag == INACTIVE) {
+            found = b;
+            break;
+        }
+    }
+
+    return found;
+}
+
+void fire_bullet(bullet_list *bullet_list, vec2 origin, vec2 origin_vel, float angle)
+{
+    bullet *b = find_inactive_bullet(bullet_list);
+    if (!b)
+        return;
+
+    b->active_flag = ACTIVE;
+    b->timer = 0;
+    b->pos = origin;
+    b->vel = vec2_unit_vec(angle);
+    vec2_mult(&b->vel, &b->vel, BULLET_SPEED);
+    vec2_add(&b->vel, &b->vel, &origin_vel);
+    bullet_list->num_active_bullets++;
 }
 
 explosion *find_inactive_explosion(explosion *expl_array, int size)

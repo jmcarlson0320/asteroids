@@ -5,7 +5,7 @@
 #include "particle.h"
 #include "list.h"
 
-#define SCALE_FACTOR 3
+#define SCALE_FACTOR 4
 #define WIDTH 400
 #define HEIGHT 300
 #define NUM_POINTS_ASTEROID 11
@@ -120,7 +120,7 @@ typedef struct {
 
 typedef struct {
     bullet bullets[MAX_BULLETS];
-    int num_bullets;
+    int num_active_bullets;
 } bullet_list;
 
 typedef struct {
@@ -196,7 +196,9 @@ int spawn_asteroid(asteroids *game, float x, float y, enum asteroid_type type);
 void update_asteroid_list(List *asteroids, float dt);
 void init_bullets(bullet_list *bullet_list);
 void update_bullets(bullet_list *bullet_list, float dt);
-void fire_bullet(bullet_list *bullet_list, float origin_x, float origin_y, float angle);
+void render_bullets(bullet_list *bullet_list);
+bullet *find_inactive_bullet(bullet_list *bullet_list);
+void fire_bullet(bullet_list *bullet_list, vec2 origin, vec2 origin_vel, float angle);
 explosion *find_inactive_explosion(explosion *expl_array, int size);
 void update_explosions(explosion *expl_array, float dt);
 void explode_asteroid(asteroids *game, asteroid *a);
