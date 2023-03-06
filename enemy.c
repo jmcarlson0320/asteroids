@@ -7,7 +7,6 @@ static char *enemy_model_filename = "models/enemy.model";
 
 static vec2 *enemy_model;
 static int num_points_enemy_model;
-static vec2 last_known_player_position;
 
 void load_enemy_model()
 {
@@ -51,15 +50,6 @@ void enemy_update(enemy *e, float dt)
     vec2_mult(&ds, &e->vel, dt);
     vec2_add(&e->pos, &e->pos, &ds);
 
-    e->shot_timer += dt;
-    if (e->shot_timer >= 1) {
-        // how should we take a shot??
-        // track enemy bullets separate from player bullets
-        // enemy struct includes enemy bullets array?
-        printf("firing shot\n");
-        e->shot_timer = 0;
-    }
-
     if (e->pos.e[X_COOR] >= WIDTH) {
         e->active = 0;
     }
@@ -72,7 +62,6 @@ void enemy_render(enemy *e)
     transform_rotate(&t, e->angle);
     transform_translate(&t, e->pos.e[X_COOR], e->pos.e[Y_COOR]);
     draw_wireframe(enemy_model, num_points_enemy_model, &t);
-    draw_fill_circle(last_known_player_position.e[0], last_known_player_position.e[1], 3, 0xffff00);
 }
 
 void spawn_enemy(enemy *e)
@@ -81,9 +70,4 @@ void spawn_enemy(enemy *e)
     e->vel = new_vec2(ENEMY_SPEED, 0);
     e->shot_timer = 0;
     e->active = ACTIVE;
-}
-
-void target_player_position(vec2 player_position)
-{
-    last_known_player_position = player_position;
 }

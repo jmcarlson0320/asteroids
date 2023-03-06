@@ -1,4 +1,6 @@
 #include "defs.h"
+#include <math.h>
+#include <stdio.h>
 
 
 static void control_rotation(ship *s, int inputs[])
@@ -36,20 +38,30 @@ static void test_update(asteroids *game, float dt)
 {
     int *inputs = game->input;
     ship *s = &game->player;
+    enemy *e = &game->enemy;
 
     control_ship(s, inputs);
-    ship_update(&game->player, dt);
+    ship_update(s, dt);
 
-    // fire bullets
-    if (game->input[FIRE])
-        fire_bullet(&game->bullet_list, game->player.pos, game->player.vel, game->player.angle);
+    if (inputs[FIRE])
+        fire_bullet(&game->bullet_list, s->pos, s->vel, s->angle);
 
     if (inputs[START_GAME])
-        spawn_enemy(&game->enemy);
+        spawn_enemy(e);
 
-    target_player_position(game->player.pos);
+    // enemy takes a shot
+    e->shot_timer += dt;
+    if (e->shot_timer >= 1) {
+        vec2 shot_direction;
+        vec2_sub(&shot_direction, &game->player.pos, &e->pos);
+        float shot_angle = atan2(shot_direction.e[Y_COOR], shot_direction.e[X_COOR]);
+        fire_bullet(&game->enemy_bullets, e->pos, new_vec2(0, 0), shot_angle);
+        e->shot_timer = 0;
+    }
+
     enemy_update(&game->enemy, dt);
     update_bullets(&game->bullet_list, dt);
+    update_bullets(&game->enemy_bullets, dt);
 }
 
 
@@ -58,12 +70,8 @@ static void test_render(asteroids *game)
     enemy_render(&game->enemy);
     ship_render(&game->player);
 
-    for (int i = 0; i < MAX_BULLETS; i++) {
-        bullet b = game->bullet_list.bullets[i];
-        if (b.active_flag) {
-            draw_fill_circle(b.pos.e[X_COOR], b.pos.e[Y_COOR], 1, 0xffffff);
-        }
-    }
+    render_bullets(&game->bullet_list);
+    render_bullets(&game->enemy_bullets);
 }
 
 
