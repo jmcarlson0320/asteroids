@@ -50,13 +50,15 @@ static void test_update(asteroids *game, float dt)
         spawn_enemy(e);
 
     // enemy takes a shot
-    e->shot_timer += dt;
-    if (e->shot_timer >= 1) {
-        vec2 shot_direction;
-        vec2_sub(&shot_direction, &game->player.pos, &e->pos);
-        float shot_angle = atan2(shot_direction.e[Y_COOR], shot_direction.e[X_COOR]);
-        fire_bullet(&game->enemy_bullets, e->pos, new_vec2(0, 0), shot_angle);
-        e->shot_timer = 0;
+    if (e->active) {
+        e->shot_timer += dt;
+        if (e->shot_timer >= 1) {
+            vec2 shot_direction;
+            vec2_sub(&shot_direction, &game->player.pos, &e->pos);
+            float shot_angle = atan2(shot_direction.e[Y_COOR], shot_direction.e[X_COOR]);
+            fire_bullet(&game->enemy_bullets, e->pos, new_vec2(0, 0), shot_angle);
+            e->shot_timer = 0;
+        }
     }
 
     enemy_update(&game->enemy, dt);

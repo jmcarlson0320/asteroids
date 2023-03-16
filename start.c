@@ -15,12 +15,12 @@ static void start_init()
 
 static void start_update(asteroids *game, float dt)
 {
-    timer_sec += dt;
-    timer_display += dt;
-    if (timer_sec >= PAUSE_LENGTH) {
-        transition_to_play(game);
-    }
 
+    timer_sec += dt;
+    if (timer_sec >= PAUSE_LENGTH)
+        transition_to_play(game);
+
+    timer_display += dt;
     if (timer_display >= 0.5f) {
         timer_display = 0.0f;
         display_flag = !display_flag;
@@ -36,8 +36,8 @@ static void start_render(asteroids *game)
 
 void transition_to_start(asteroids *game)
 {
+    start_init();
     game->update = start_update;
     game->render = start_render;
     game->state = START;
-    start_init();
 }

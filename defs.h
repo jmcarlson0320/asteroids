@@ -5,9 +5,9 @@
 #include "particle.h"
 #include "list.h"
 
-#define SCALE_FACTOR 4
-#define WIDTH 400
-#define HEIGHT 300
+#define SCALE_FACTOR 2
+#define WIDTH 640
+#define HEIGHT 480
 #define NUM_POINTS_ASTEROID 11
 #define MAX_BULLETS 4
 #define BULLET_SPEED 350
@@ -20,7 +20,7 @@
 #define ACTIVE 1
 #define INACTIVE 0
 #define MAX_ASTEROIDS 64
-#define NUM_START_ASTEROIDS 2
+#define NUM_START_ASTEROIDS 6
 #define NUM_HIGHSCORES 10
 
 enum gamestate {

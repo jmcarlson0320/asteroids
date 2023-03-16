@@ -3,10 +3,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-static char *enemy_model_filename = "models/enemy.model";
 
+static char *enemy_model_filename = "models/enemy.model";
 static vec2 *enemy_model;
 static int num_points_enemy_model;
+
 
 void load_enemy_model()
 {
@@ -20,16 +21,18 @@ void load_enemy_model()
     fscanf(fp, "%d\n", &num_points_enemy_model);
 
     enemy_model = malloc(sizeof(vec2) * num_points_enemy_model);
-    for (int i = 0; i < num_points_enemy_model; i++) {
+    for (int i = 0; i < num_points_enemy_model; i++)
         fscanf(fp, "%f %f\n", &enemy_model[i].e[X_COOR], &enemy_model[i].e[Y_COOR]);
-    }
+
     fclose(fp);
 }
+
 
 void free_enemy_model()
 {
     free(enemy_model);
 }
+
 
 void enemy_init(enemy *e)
 {
@@ -40,29 +43,33 @@ void enemy_init(enemy *e)
     e->vel = new_vec2(0, 0);
 }
 
+
 void enemy_update(enemy *e, float dt)
 {
-    if (!e->active) {
+    if (!e->active)
         return;
-    }
 
     vec2 ds;
     vec2_mult(&ds, &e->vel, dt);
     vec2_add(&e->pos, &e->pos, &ds);
 
-    if (e->pos.e[X_COOR] >= WIDTH) {
+    if (e->pos.e[X_COOR] >= WIDTH)
         e->active = 0;
-    }
 }
+
 
 void enemy_render(enemy *e)
 {
+    if (!e->active)
+        return;
+
     transform t = new_transform();
     transform_scale(&t, e->scale);
     transform_rotate(&t, e->angle);
     transform_translate(&t, e->pos.e[X_COOR], e->pos.e[Y_COOR]);
     draw_wireframe(enemy_model, num_points_enemy_model, &t);
 }
+
 
 void spawn_enemy(enemy *e)
 {

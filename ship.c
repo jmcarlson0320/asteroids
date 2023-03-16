@@ -4,7 +4,6 @@
 #include <stdlib.h>
 
 static char *ship_model_filename = "models/ship.model";
-
 static vec2 *ship_model;
 static int num_vertices_ship_model;
 
@@ -27,9 +26,9 @@ void load_ship_model()
 
     ship_model = malloc(sizeof(vec2) * num_vertices_ship_model);
 
-    for (int i = 0; i < num_vertices_ship_model; i++) {
+    for (int i = 0; i < num_vertices_ship_model; i++)
         fscanf(fp, "%f %f\n", &ship_model[i].e[X_COOR], &ship_model[i].e[Y_COOR]);
-    }
+
     fclose(fp);
 }
 
@@ -44,13 +43,10 @@ void ship_init(ship *s, float x, float y)
     s->angle = 3.0f * M_PI / 2.0f;
     s->scale = 10;
     s->pos = new_vec2(x, y);
-
     s->vel = new_vec2(0, 0);
     s->drag = 0.99f;
-
     s->flame_timer = 0;
     s->flame_toggle = 1;
-
     s->ctl_rotate = ROTATE_STOP;
     s->ctl_thrust = 0;
 }
@@ -117,7 +113,6 @@ void ship_render(ship *s)
     transform_translate(&t, s->pos.e[X_COOR], s->pos.e[Y_COOR]);
     draw_wireframe(ship_model, num_vertices_ship_model, &t);
 
-    if (s->ctl_thrust && s->flame_toggle) {
+    if (s->ctl_thrust && s->flame_toggle)
         draw_wireframe(flame_model, 3, &t);
-    }
 }
